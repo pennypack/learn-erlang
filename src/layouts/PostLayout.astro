@@ -1,0 +1,195 @@
+---
+import Layout from './Layout.astro';
+import TableOfContents from '../components/TableOfContents.astro';
+import PostNavigation from '../components/PostNavigation.astro';
+import ReadingTime from '../components/ReadingTime.astro';
+import { getCollection } from 'astro:content';
+
+export interface Props {
+  title: string;
+  description: string;
+  postNumber: number;
+  publishDate: Date;
+  tags: string[];
+  difficulty: 'beginner' | 'intermediate' | 'advanced';
+  estimatedReadingTime?: number;
+  prerequisites?: number[];
+}
+
+const { title, description, postNumber, publishDate, tags, difficulty, estimatedReadingTime, prerequisites } = Astro.props;
+
+// Get all posts for navigation
+const allPosts = await getCollection('posts');
+const sortedPosts = allPosts.sort((a, b) => a.data.postNumber - b.data.postNumber);
+
+const currentIndex = sortedPosts.findIndex(p => p.data.postNumber === postNumber);
+const prevPost = currentIndex > 0 ? sortedPosts[currentIndex - 1] : null;
+const nextPost = currentIndex < sortedPosts.length - 1 ? sortedPosts[currentIndex + 1] : null;
+
+const gitHubEditUrl = `https://github.com/yourusername/learn-erlang/edit/main/src/content/posts/${sortedPosts[currentIndex].id}`;
+---
+
+<Layout title={title} description={description}>
+  <article class="prose prose-lg dark:prose-invert max-w-none">
+    <!-- Post Header -->
+    <header class="not-prose mb-8 pb-8 border-b border-gray-200 dark:border-gray-800">
+      <div class="flex items-center gap-3 mb-4">
+        <span class={`
+          inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
+          ${difficulty === 'beginner' && 'bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300'}
+          ${difficulty === 'intermediate' && 'bg-yellow-100 dark:bg-yellow-900/50 text-yellow-700 dark:text-yellow-300'}
+          ${difficulty === 'advanced' && 'bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300'}
+        `}>
+          {difficulty}
+        </span>
+        
+        <ReadingTime content={Astro.slots.default} estimatedTime={estimatedReadingTime} />
+      </div>
+      
+      <h1 class="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+        Post {postNumber}: {title}
+      </h1>
+      
+      <p class="text-xl text-gray-600 dark:text-gray-400 mb-4">
+        {description}
+      </p>
+      
+      <div class="flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
+        <time datetime={publishDate.toISOString()}>
+          {publishDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+        </time>
+        
+        <div class="flex items-center gap-2">
+          {tags.map(tag => (
+            <span class="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded text-xs">
+              {tag}
+            </span>
+          ))}
+        </div>
+        
+        <a
+          href={gitHubEditUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="ml-auto flex items-center gap-1 hover:text-gray-900 dark:hover:text-gray-100"
+        >
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+          </svg>
+          Edit this page
+        </a>
+      </div>
+      
+      {prerequisites && prerequisites.length > 0 && (
+        <div class="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+          <h3 class="text-sm font-medium text-blue-900 dark:text-blue-100 mb-2">Prerequisites</h3>
+          <p class="text-sm text-blue-700 dark:text-blue-300">
+            Complete these posts first:
+            {prerequisites.map((num, i) => {
+              const prereqPost = sortedPosts.find(p => p.data.postNumber === num);
+              return (
+                <span>
+                  {i > 0 && ', '}
+                  <a href={`/posts/${prereqPost?.slug}`} class="underline">
+                    Post {num}: {prereqPost?.data.title}
+                  </a>
+                </span>
+              );
+            })}
+          </p>
+        </div>
+      )}
+    </header>
+    
+    <!-- Table of Contents -->
+    <TableOfContents />
+    
+    <!-- Post Content -->
+    <div id="post-content" class="mt-8">
+      <slot />
+    </div>
+    
+    <!-- Mark as Complete -->
+    <div class="not-prose mt-12 p-6 bg-gray-50 dark:bg-gray-900 rounded-lg">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+            Finished this post?
+          </h3>
+          <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+            Mark it as complete to track your progress
+          </p>
+        </div>
+        
+        <button
+          id="mark-complete"
+          data-post-number={postNumber}
+          class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md font-medium transition-colors"
+        >
+          Mark as Complete
+        </button>
+      </div>
+    </div>
+    
+    <!-- Navigation -->
+    <PostNavigation prev={prevPost} next={nextPost} />
+  </article>
+</Layout>
+
+<script>
+  // Handle marking posts as complete
+  document.addEventListener('astro:page-load', () => {
+    const button = document.getElementById('mark-complete');
+    const postNumber = parseInt(button?.getAttribute('data-post-number') || '0');
+    
+    // Check if already completed
+    const completedPosts = JSON.parse(localStorage.getItem('completedPosts') || '[]');
+    if (completedPosts.includes(postNumber)) {
+      if (button) {
+        button.textContent = 'Completed ✓';
+        button.classList.remove('bg-green-600', 'hover:bg-green-700');
+        button.classList.add('bg-gray-400', 'cursor-not-allowed');
+        (button as HTMLButtonElement).disabled = true;
+      }
+    }
+    
+    button?.addEventListener('click', () => {
+      const completed = JSON.parse(localStorage.getItem('completedPosts') || '[]');
+      if (!completed.includes(postNumber)) {
+        completed.push(postNumber);
+        localStorage.setItem('completedPosts', JSON.stringify(completed));
+        
+        button.textContent = 'Completed ✓';
+        button.classList.remove('bg-green-600', 'hover:bg-green-700');
+        button.classList.add('bg-gray-400', 'cursor-not-allowed');
+        (button as HTMLButtonElement).disabled = true;
+        
+        // Trigger storage event for other components
+        window.dispatchEvent(new Event('storage'));
+      }
+    });
+  });
+  
+  // Add copy buttons to code blocks
+  document.addEventListener('astro:page-load', () => {
+    const codeBlocks = document.querySelectorAll('pre');
+    
+    codeBlocks.forEach((block) => {
+      const button = document.createElement('button');
+      button.className = 'copy-button';
+      button.textContent = 'Copy';
+      
+      button.addEventListener('click', async () => {
+        const code = block.querySelector('code')?.textContent || '';
+        await navigator.clipboard.writeText(code);
+        button.textContent = 'Copied!';
+        setTimeout(() => {
+          button.textContent = 'Copy';
+        }, 2000);
+      });
+      
+      block.style.position = 'relative';
+      block.appendChild(button);
+    });
+  });
+</script>

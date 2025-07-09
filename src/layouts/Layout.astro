@@ -1,0 +1,112 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Sidebar from '../components/Sidebar.astro';
+import { ViewTransitions } from 'astro:transitions';
+
+export interface Props {
+  title: string;
+  description?: string;
+  ogImage?: string;
+}
+
+const { title, description = 'Learn Erlang Step-By-Step - Build a WebSocket chat server from scratch', ogImage = '/og-default.png' } = Astro.props;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    
+    <!-- SEO -->
+    <title>{title} | Learn Erlang Step-By-Step</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:image" content={new URL(ogImage, Astro.site)} />
+    <meta property="og:type" content="website" />
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={new URL(ogImage, Astro.site)} />
+    
+    <!-- Theme -->
+    <script is:inline>
+      // Initialize theme on first load
+      function initializeTheme() {
+        const theme = (() => {
+          if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+            return localStorage.getItem('theme');
+          }
+          if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            return 'dark';
+          }
+          return 'light';
+        })();
+        
+        if (theme === 'dark') {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      }
+      
+      // Run on initial load
+      initializeTheme();
+      
+      // Handle view transitions
+      document.addEventListener('astro:after-swap', initializeTheme);
+    </script>
+    
+    <ViewTransitions />
+  </head>
+  <body class="min-h-screen flex flex-col">
+    <Header />
+    
+    <div class="flex-1 flex">
+      <Sidebar />
+      
+      <main class="flex-1 w-full max-w-none lg:max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <slot />
+      </main>
+    </div>
+    
+    <script>
+      // Keyboard navigation
+      document.addEventListener('keydown', (e) => {
+        // Only activate if no input is focused
+        if (document.activeElement?.tagName === 'INPUT' || 
+            document.activeElement?.tagName === 'TEXTAREA') {
+          return;
+        }
+        
+        // Ctrl/Cmd + K for search
+        if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+          e.preventDefault();
+          document.getElementById('search-button')?.click();
+        }
+        
+        // Navigation shortcuts
+        if (e.key === 'ArrowLeft') {
+          const prevLink = document.querySelector('[data-prev-link]') as HTMLAnchorElement;
+          if (prevLink) prevLink.click();
+        }
+        
+        if (e.key === 'ArrowRight') {
+          const nextLink = document.querySelector('[data-next-link]') as HTMLAnchorElement;
+          if (nextLink) nextLink.click();
+        }
+      });
+    </script>
+  </body>
+</html>

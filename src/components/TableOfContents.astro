@@ -1,0 +1,54 @@
+---
+---
+
+<nav class="not-prose mb-8 p-6 bg-gray-50 dark:bg-gray-900 rounded-lg">
+  <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+    Table of Contents
+  </h2>
+  <ul id="toc" class="space-y-2 text-sm">
+    <!-- Will be populated by JavaScript -->
+  </ul>
+</nav>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const toc = document.getElementById('toc');
+    const content = document.getElementById('post-content');
+    
+    if (!toc || !content) return;
+    
+    const headings = content.querySelectorAll('h2, h3');
+    const tocItems: string[] = [];
+    
+    headings.forEach((heading, index) => {
+      const id = `heading-${index}`;
+      heading.id = id;
+      
+      const level = heading.tagName === 'H2' ? 0 : 1;
+      const text = heading.textContent || '';
+      
+      tocItems.push(`
+        <li class="${level === 1 ? 'ml-4' : ''}">
+          <a href="#${id}" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
+            ${text}
+          </a>
+        </li>
+      `);
+    });
+    
+    toc.innerHTML = tocItems.join('');
+    
+    // Smooth scroll behavior
+    toc.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const target = document.querySelector(link.getAttribute('href') || '');
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          // Update URL without triggering navigation
+          history.pushState(null, '', link.getAttribute('href') || '');
+        }
+      });
+    });
+  });
+</script>

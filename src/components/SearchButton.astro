@@ -1,0 +1,97 @@
+---
+---
+
+<button
+  id="search-button"
+  class="flex items-center space-x-2 px-3 py-1.5 text-sm text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700"
+>
+  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+  </svg>
+  <span class="hidden sm:inline">Search</span>
+  <kbd class="hidden sm:inline-flex items-center space-x-1 text-xs">
+    <span>⌘</span><span>K</span>
+  </kbd>
+</button>
+
+<div id="search-modal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+  <div class="flex items-start justify-center min-h-screen pt-20 px-4">
+    <div class="fixed inset-0 bg-gray-500 bg-opacity-75 dark:bg-gray-900 dark:bg-opacity-75" id="search-backdrop"></div>
+    
+    <div class="relative bg-white dark:bg-gray-800 rounded-lg max-w-lg w-full shadow-xl">
+      <div class="p-4">
+        <input
+          type="text"
+          id="search-input"
+          class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          placeholder="Search posts..."
+        />
+        
+        <div id="search-results" class="mt-4 space-y-2 max-h-96 overflow-y-auto">
+          <!-- Results will be injected here -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const searchButton = document.getElementById('search-button');
+  const searchModal = document.getElementById('search-modal');
+  const searchBackdrop = document.getElementById('search-backdrop');
+  const searchInput = document.getElementById('search-input') as HTMLInputElement;
+  const searchResults = document.getElementById('search-results');
+  
+  let posts: any[] = [];
+  
+  // Load posts data
+  async function loadPosts() {
+    const response = await fetch('/api/posts.json');
+    posts = await response.json();
+  }
+  
+  loadPosts();
+  
+  function openSearch() {
+    searchModal?.classList.remove('hidden');
+    searchInput?.focus();
+  }
+  
+  function closeSearch() {
+    searchModal?.classList.add('hidden');
+    searchInput.value = '';
+    if (searchResults) searchResults.innerHTML = '';
+  }
+  
+  function performSearch(query: string) {
+    if (!query || !searchResults) return;
+    
+    const results = posts.filter(post => 
+      post.title.toLowerCase().includes(query.toLowerCase()) ||
+      post.description.toLowerCase().includes(query.toLowerCase()) ||
+      post.tags.some((tag: string) => tag.toLowerCase().includes(query.toLowerCase()))
+    );
+    
+    searchResults.innerHTML = results.length === 0 
+      ? '<p class="text-gray-500 dark:text-gray-400 text-center py-4">No results found</p>'
+      : results.map(post => `
+          <a href="/posts/${post.slug}" class="block p-3 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700">
+            <h3 class="font-medium text-gray-900 dark:text-gray-100">${post.title}</h3>
+            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">${post.description}</p>
+          </a>
+        `).join('');
+  }
+  
+  searchButton?.addEventListener('click', openSearch);
+  searchBackdrop?.addEventListener('click', closeSearch);
+  
+  searchInput?.addEventListener('input', (e) => {
+    const query = (e.target as HTMLInputElement).value;
+    performSearch(query);
+  });
+  
+  // ESC to close
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeSearch();
+  });
+</script>

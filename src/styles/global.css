@@ -1,0 +1,97 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-primary: 220 90% 56%;
+    --color-secondary: 260 54% 45%;
+  }
+
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply bg-white text-gray-900 dark:bg-gray-950 dark:text-gray-100;
+  }
+
+  /* Scrollbar styles */
+  ::-webkit-scrollbar {
+    @apply w-2;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-gray-100 dark:bg-gray-900;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gray-400 dark:bg-gray-600 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-500 dark:bg-gray-500;
+  }
+}
+
+@layer components {
+  /* Code block copy button */
+  .copy-button {
+    @apply absolute top-2 right-2 px-2 py-1 text-xs bg-gray-700 text-white rounded opacity-0 transition-opacity;
+  }
+
+  pre:hover .copy-button {
+    @apply opacity-100;
+  }
+
+  /* Keyboard shortcuts */
+  .kbd {
+    @apply px-2 py-1 text-xs font-mono bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded;
+  }
+
+  /* Progress indicator */
+  .progress-ring {
+    @apply transform -rotate-90;
+  }
+
+  .progress-ring-circle {
+    @apply transition-all duration-500 ease-in-out;
+  }
+}
+
+@layer utilities {
+  /* Print styles */
+  @media print {
+    .no-print {
+      display: none !important;
+    }
+
+    body {
+      @apply text-black bg-white;
+    }
+
+    a {
+      @apply text-black underline;
+    }
+
+    pre {
+      @apply border border-gray-300 p-4;
+    }
+  }
+
+  /* Animation utilities */
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.3s ease-out;
+  }
+}
