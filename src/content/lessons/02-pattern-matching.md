@@ -1,0 +1,416 @@
+---
+title: "Pattern Matching - Erlang's Superpower"
+description: "Master Erlang's most powerful feature - pattern matching - to elegantly handle data structures and build robust chat server components"
+postNumber: 2
+publishDate: 2024-01-03T00:00:00Z
+tags: ["pattern-matching", "lists", "tuples", "parsing"]
+difficulty: "beginner"
+estimatedReadingTime: 15
+prerequisites: [0, 1]
+---
+
+# Pattern Matching - Erlang's Superpower
+
+Pattern matching is what makes Erlang code so elegant and powerful. Instead of checking conditions with if statements, you describe the shape of data you expect and let Erlang do the matching for you.
+
+## Simple Pattern Matching Examples
+
+Let's start with the most basic examples to understand how pattern matching works:
+
+```erlang
+% Start the shell and try these:
+1> MyList = [1, 2, 3].
+[1,2,3]
+
+2> [A, B, C] = MyList.
+[1,2,3]
+
+3> A.
+1
+
+4> B.
+2
+
+5> C.
+3
+
+% Use underscore for values you don't care about
+6> [_, _, Z] = MyList.
+[1,2,3]
+
+7> Z.
+3
+```
+
+**What happened?**
+- `[A, B, C] = MyList` matches the pattern `[A, B, C]` against `[1, 2, 3]`
+- Erlang binds `A = 1`, `B = 2`, `C = 3`
+- `_` means "I don't care about this value"
+
+---
+
+## Pattern Matching in Function Heads
+
+This is where pattern matching becomes really powerful:
+
+```erlang
+-module(list_processor).
+-export([first_element/1, list_length/1, describe_list/1]).
+
+% Get first element of a list
+first_element([Head | _]) ->
+    Head;
+first_element([]) ->
+    empty_list.
+
+% Calculate list length recursively
+list_length([]) ->
+    0;
+list_length([_ | Tail]) ->
+    1 + list_length(Tail).
+
+% Describe what kind of list we have
+describe_list([]) ->
+    "Empty list";
+describe_list([_]) ->
+    "Single item";
+describe_list([_, _]) ->
+    "Two items";
+describe_list([_, _, _]) ->
+    "Three items";
+describe_list(_) ->
+    "Many items".
+```
+
+**Key patterns:**
+- `[Head | Tail]` - Splits list into first element and rest
+- `[_]` - Matches list with exactly one element
+- `[]` - Matches empty list
+
+### Test It Out
+
+```bash
+1> c(list_processor).
+{ok,list_processor}
+
+2> list_processor:first_element([1, 2, 3]).
+1
+
+3> list_processor:list_length([a, b, c, d]).
+4
+
+4> list_processor:describe_list([]).
+"Empty list"
+
+5> list_processor:describe_list([1, 2]).
+"Two items"
+```
+
+---
+
+## Tuple Pattern Matching
+
+Tuples are perfect for grouping related data:
+
+```erlang
+-module(tuple_demo).
+-export([process_result/1, get_user_info/1, coordinate_distance/2]).
+
+% Handle different result types
+process_result({ok, Data}) ->
+    io:format("Success: ~p~n", [Data]);
+process_result({error, Reason}) ->
+    io:format("Error: ~p~n", [Reason]);
+process_result({warning, Message}) ->
+    io:format("Warning: ~p~n", [Message]).
+
+% Extract user information
+get_user_info({user, Name, Age, Status}) ->
+    io:format("User ~s is ~p years old and ~p~n", [Name, Age, Status]).
+
+% Calculate distance between two points
+coordinate_distance({X1, Y1}, {X2, Y2}) ->
+    DX = X2 - X1,
+    DY = Y2 - Y1,
+    math:sqrt(DX * DX + DY * DY).
+```
+
+### Test Tuple Matching
+
+```bash
+1> c(tuple_demo).
+{ok,tuple_demo}
+
+2> tuple_demo:process_result({ok, "Message sent"}).
+Success: "Message sent"
+ok
+
+3> tuple_demo:get_user_info({user, "Alice", 25, online}).
+User Alice is 25 years old and online
+ok
+
+4> tuple_demo:coordinate_distance({0, 0}, {3, 4}).
+5.0
+```
+
+---
+
+## Building a Chat Command Parser
+
+Let's apply pattern matching to build a practical command parser for our chat server:
+
+```erlang
+-module(chat_commands).
+-export([parse_command/1, handle_result/1]).
+
+% Parse different chat commands using pattern matching
+parse_command(<<"/join ", Room/binary>>) when byte_size(Room) > 0 ->
+    {join_room, Room};
+parse_command(<<"/leave">>) ->
+    leave_room;
+parse_command(<<"/users">>) ->
+    list_users;
+parse_command(<<"/help">>) ->
+    show_help;
+parse_command(<<"/nick ", NewName/binary>>) when byte_size(NewName) > 0 ->
+    {change_nickname, NewName};
+parse_command(Message) when byte_size(Message) > 0 ->
+    {chat_message, Message};
+parse_command(_) ->
+    invalid_command.
+
+% Handle different result types
+handle_result({ok, Value}) ->
+    io:format("Success: ~p~n", [Value]);
+handle_result({error, Reason}) ->
+    io:format("Error: ~p~n", [Reason]);
+handle_result({join_room, Room}) ->
+    io:format("User wants to join room: ~s~n", [Room]);
+handle_result(leave_room) ->
+    io:format("User wants to leave current room~n");
+handle_result({change_nickname, Name}) ->
+    io:format("User wants to change name to: ~s~n", [Name]);
+handle_result(_) ->
+    io:format("Unknown result~n").
+```
+
+**What's happening:**
+- **Binary pattern matching** extracts parts of binary strings
+- **Guards** (`when`) add extra conditions
+- **Different clauses** handle different input patterns
+- **Underscore** (`_`) matches anything we don't care about
+
+### Test the Parser
+
+```bash
+1> c(chat_commands).
+{ok,chat_commands}
+
+2> chat_commands:parse_command(<<"/join general">>).
+{join_room,<<"general">>}
+
+3> chat_commands:parse_command(<<"Hello everyone!">>).
+{chat_message,<<"Hello everyone!">>}
+
+4> chat_commands:handle_result({join_room, <<"general">>}).
+User wants to join room: general
+ok
+```
+
+---
+
+## Advanced List Patterns
+
+Let's explore more complex list patterns:
+
+```erlang
+-module(list_patterns).
+-export([analyze_list/1, process_pairs/1, find_pattern/1]).
+
+% Analyze different list structures
+analyze_list([]) ->
+    empty;
+analyze_list([X]) ->
+    {single, X};
+analyze_list([X, Y]) ->
+    {pair, X, Y};
+analyze_list([X, Y, Z]) ->
+    {triple, X, Y, Z};
+analyze_list([First | Rest]) ->
+    {list, First, length(Rest)}.
+
+% Process list of pairs
+process_pairs([]) ->
+    [];
+process_pairs([{Key, Value} | Rest]) ->
+    io:format("~p: ~p~n", [Key, Value]),
+    process_pairs(Rest).
+
+% Find specific patterns
+find_pattern([1, 2, 3 | _]) ->
+    "Starts with 1, 2, 3";
+find_pattern([X, X | _]) ->
+    "First two elements are the same";
+find_pattern([X, Y | _]) when X > Y ->
+    "First element is larger than second";
+find_pattern(_) ->
+    "No special pattern found".
+```
+
+---
+
+## Case Expressions
+
+Sometimes you need pattern matching inside a function:
+
+```erlang
+-module(message_processor).
+-export([process_message/1, validate_user/1]).
+
+process_message(Message) ->
+    case chat_commands:parse_command(Message) of
+        {join_room, Room} ->
+            io:format("Joining room: ~s~n", [Room]),
+            {ok, joined};
+        {chat_message, Text} ->
+            io:format("Broadcasting: ~s~n", [Text]),
+            {ok, sent};
+        leave_room ->
+            io:format("Leaving current room~n"),
+            {ok, left};
+        invalid_command ->
+            {error, "Invalid command"}
+    end.
+
+validate_user(UserData) ->
+    case UserData of
+        {user, Name, Age} when is_binary(Name), is_integer(Age), Age > 0 ->
+            {ok, valid_user};
+        {user, _, Age} when Age =< 0 ->
+            {error, invalid_age};
+        {user, Name, _} when not is_binary(Name) ->
+            {error, invalid_name};
+        _ ->
+            {error, invalid_format}
+    end.
+```
+
+---
+
+## Exercises - Practice Pattern Matching!
+
+**Exercise 1: List Operations**
+
+Create a module `list_ops.erl`:
+
+```erlang
+-module(list_ops).
+-export([second_element/1, last_two/1, remove_first/1]).
+
+% Get second element of list
+second_element([_, Second | _]) ->
+    {ok, Second};
+second_element(_) ->
+    {error, not_enough_elements}.
+
+% Get last two elements
+last_two([A, B]) ->
+    {ok, [A, B]};
+last_two([_ | Tail]) ->
+    last_two(Tail);
+last_two(_) ->
+    {error, not_enough_elements}.
+
+% Remove first element
+remove_first([_ | Tail]) ->
+    Tail;
+remove_first([]) ->
+    [].
+```
+
+**Exercise 2: Message Validator**
+
+Create a validator for chat messages:
+
+```erlang
+-module(message_validator).
+-export([validate_message/1]).
+
+validate_message({message, User, Text, _Timestamp}) 
+    when is_binary(User), is_binary(Text), 
+         byte_size(User) > 0, byte_size(Text) > 0,
+         byte_size(Text) =< 500 ->
+    {ok, valid};
+validate_message({message, _User, Text, _}) when byte_size(Text) > 500 ->
+    {error, message_too_long};
+validate_message({message, User, _Text, _}) when byte_size(User) =:= 0 ->
+    {error, empty_username};
+validate_message(_) ->
+    {error, invalid_format}.
+```
+
+**Exercise 3: Advanced Pattern Matching**
+
+Create a number sequence analyzer:
+
+```erlang
+-module(sequence_analyzer).
+-export([analyze_sequence/1]).
+
+analyze_sequence([]) ->
+    empty;
+analyze_sequence([X]) ->
+    {single, X};
+analyze_sequence([X, X | _]) ->
+    {starts_with_duplicate, X};
+analyze_sequence([X, Y | _]) when Y =:= X + 1 ->
+    {ascending_sequence, X, Y};
+analyze_sequence([X, Y | _]) when Y =:= X - 1 ->
+    {descending_sequence, X, Y};
+analyze_sequence([X, Y | _]) ->
+    {different_numbers, X, Y}.
+```
+
+---
+
+## Key Takeaways
+
+1. **Pattern matching** describes the shape of data you expect
+2. **Function heads** use patterns to handle different cases
+3. **Lists** can be matched with `[Head | Tail]` or specific patterns
+4. **Tuples** group related data: `{ok, Value}`, `{error, Reason}`
+5. **Guards** (`when`) add extra conditions to patterns
+6. **Case expressions** allow pattern matching inside functions
+7. **Underscore** (`_`) matches values you don't care about
+
+---
+
+## What's Next?
+
+In **Lesson 3**, we'll explore **recursion and higher-order functions** to process data efficiently:
+
+- Recursive functions for list processing
+- Map, filter, and fold operations
+- Building a message history system
+- Performance considerations
+
+Pattern matching combined with recursion makes Erlang incredibly powerful for data processing!
+
+---
+
+## Test Your Understanding
+
+Before moving on, make sure you can:
+
+1. Match simple patterns like `[A, B, C] = [1, 2, 3]`
+2. Use pattern matching in function heads
+3. Extract data from tuples like `{ok, Value}`
+4. Handle different list patterns (`[]`, `[Head | Tail]`)
+5. Use guards with `when` to add conditions
+6. Write case expressions for pattern matching
+
+If any of these feel unclear, review the examples and try the exercises again. Pattern matching is the foundation of elegant Erlang code!
+
+---
+
+_This is part of the "Learn Erlang Step-By-Step" tutorial series. Each lesson builds on the previous ones, so make sure you complete the exercises before moving forward._

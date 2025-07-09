@@ -1,11 +1,11 @@
 ---
 title: "Your First Erlang Module"
-description: "Learn Erlang's basic syntax, modules, functions, and pattern matching by building utility functions for our chat server"
+description: "Learn Erlang's basic syntax, modules, functions, and data types by building utility functions for our chat server"
 postNumber: 1
 publishDate: 2024-01-02T00:00:00Z
-tags: ["basics", "syntax", "modules", "pattern-matching"]
+tags: ["basics", "syntax", "modules", "functions"]
 difficulty: "beginner"
-estimatedReadingTime: 15
+estimatedReadingTime: 10
 prerequisites: [0]
 ---
 
@@ -18,8 +18,8 @@ Welcome back! Now that you have Erlang installed and your project set up, it's t
 Before diving into syntax, understand these core principles:
 
 1. **Everything is immutable** - Once created, values never change
-2. **Pattern matching everywhere** - The heart of Erlang's expressiveness
-3. **No side effects** - Functions return values, don't modify state
+2. **Functions return values** - Don't modify state, just return results
+3. **Pattern matching** - We'll explore this powerful feature in lesson 2
 4. **Processes communicate by message passing** - No shared memory
 
 These principles make Erlang perfect for building fault-tolerant, concurrent systems.
@@ -121,232 +121,100 @@ demonstrate() ->
 
 ---
 
-## Pattern Matching - Erlang's Superpower
+## Simple Functions with Basic Logic
 
-Pattern matching is what makes Erlang code so elegant. Let's build a command parser for our chat server:
-
-```erlang
--module(command_parser).
--export([parse_command/1, handle_result/1]).
-
-% Parse different chat commands
-parse_command(<<"/join ", Room/binary>>) when byte_size(Room) > 0 ->
-    {join_room, Room};
-parse_command(<<"/leave">>) ->
-    leave_room;
-parse_command(<<"/users">>) ->
-    list_users;
-parse_command(<<"/help">>) ->
-    show_help;
-parse_command(Message) when byte_size(Message) > 0 ->
-    {chat_message, Message};
-parse_command(_) ->
-    invalid_command.
-
-% Handle different result types
-handle_result({ok, Value}) ->
-    io:format("Success: ~p~n", [Value]);
-handle_result({error, Reason}) ->
-    io:format("Error: ~p~n", [Reason]);
-handle_result({join_room, Room}) ->
-    io:format("User wants to join room: ~s~n", [Room]);
-handle_result(leave_room) ->
-    io:format("User wants to leave current room~n");
-handle_result(_) ->
-    io:format("Unknown result~n").
-```
-
-**What's happening here:**
-- **Binary pattern matching** extracts parts of binary strings
-- **Guards** (`when`) add extra conditions
-- **Different clauses** handle different input patterns
-- **Underscore** (`_`) matches anything we don't care about
-
-### Test the Parser
-
-```bash
-1> c(command_parser).
-{ok,command_parser}
-
-2> command_parser:parse_command(<<"/join general">>).
-{join_room,<<"general">>}
-
-3> command_parser:parse_command(<<"Hello everyone!">>).
-{chat_message,<<"Hello everyone!">>}
-
-4> command_parser:handle_result({ok, "Message sent"}).
-Success: "Message sent"
-ok
-```
-
----
-
-## Function Heads and Guards
-
-Functions can have multiple clauses with different patterns and guards:
+Let's create some simple functions that use basic conditionals:
 
 ```erlang
--module(user_validator).
--export([validate_username/1, check_message_length/1]).
+-module(simple_math).
+-export([max_of_two/2, is_even/1, grade_letter/1]).
 
-% Validate username with different patterns
-validate_username(Name) when is_binary(Name), byte_size(Name) > 0, 
-                             byte_size(Name) =< 20 ->
-    case re:run(Name, "^[a-zA-Z0-9_]+$") of
-        {match, _} -> {ok, Name};
-        nomatch -> {error, invalid_characters}
-    end;
-validate_username(Name) when is_binary(Name), byte_size(Name) > 20 ->
-    {error, too_long};
-validate_username(Name) when is_binary(Name), byte_size(Name) =:= 0 ->
-    {error, empty_username};
-validate_username(_) ->
-    {error, invalid_type}.
+% Find maximum of two numbers
+max_of_two(A, B) when A >= B ->
+    A;
+max_of_two(A, B) when A < B ->
+    B.
 
-% Check message length
-check_message_length(Msg) when is_binary(Msg), byte_size(Msg) > 0,
-                               byte_size(Msg) =< 500 ->
-    {ok, Msg};
-check_message_length(Msg) when is_binary(Msg), byte_size(Msg) > 500 ->
-    {error, message_too_long};
-check_message_length(Msg) when is_binary(Msg), byte_size(Msg) =:= 0 ->
-    {error, empty_message};
-check_message_length(_) ->
-    {error, invalid_type}.
+% Check if number is even
+is_even(N) when N rem 2 =:= 0 ->
+    true;
+is_even(_) ->
+    false.
+
+% Convert numeric grade to letter
+grade_letter(Score) when Score >= 90 ->
+    "A";
+grade_letter(Score) when Score >= 80 ->
+    "B";
+grade_letter(Score) when Score >= 70 ->
+    "C";
+grade_letter(Score) when Score >= 60 ->
+    "D";
+grade_letter(_) ->
+    "F".
 ```
 
-**Guard functions you'll use:**
-- `is_binary/1`, `is_atom/1`, `is_integer/1`, `is_list/1`
-- `byte_size/1`, `length/1`
-- `=/=` (not equal), `=:=` (exactly equal)
-
----
-
-## Building Chat Server Utilities
-
-Let's create a practical module for our chat server:
-
-```erlang
--module(chat_server_utils).
--export([generate_user_id/0, validate_room_name/1, format_user_list/1]).
-
-% Generate unique user ID
-generate_user_id() ->
-    {MegaSecs, Secs, MicroSecs} = erlang:timestamp(),
-    UniqueInt = MegaSecs * 1000000000000 + Secs * 1000000 + MicroSecs,
-    integer_to_binary(UniqueInt).
-
-% Validate room name
-validate_room_name(Name) when is_binary(Name), 
-                              byte_size(Name) > 0, 
-                              byte_size(Name) =< 50 ->
-    case re:run(Name, "^[a-zA-Z0-9_-]+$") of
-        {match, _} -> {ok, Name};
-        nomatch -> {error, invalid_room_name}
-    end;
-validate_room_name(Name) when is_binary(Name), byte_size(Name) > 50 ->
-    {error, room_name_too_long};
-validate_room_name(Name) when is_binary(Name), byte_size(Name) =:= 0 ->
-    {error, empty_room_name};
-validate_room_name(_) ->
-    {error, invalid_type}.
-
-% Format list of users for display
-format_user_list([]) ->
-    <<"No users online">>;
-format_user_list(Users) when is_list(Users) ->
-    UserStrings = [format_user(User) || User <- Users],
-    iolist_to_binary(["Users online: ", string:join(UserStrings, ", ")]).
-
-% Helper function (not exported)
-format_user({user, Name, Status}) ->
-    binary_to_list(Name) ++ " (" ++ atom_to_list(Status) ++ ")";
-format_user(Name) when is_binary(Name) ->
-    binary_to_list(Name).
-```
+**What's happening:**
+- Multiple function clauses with different conditions
+- **Guards** (`when`) test conditions
+- Functions return different values based on input
 
 ---
 
 ## Exercises - Type and Test!
 
-**Exercise 1: Basic Functions**
+**Exercise 1: Basic Calculator**
 
-Create a module called `message_utils.erl` with these functions:
+Create a module called `calculator.erl`:
 
 ```erlang
--module(message_utils).
--export([count_words/1, truncate_message/2, is_command/1]).
+-module(calculator).
+-export([add/2, subtract/2, multiply/2, divide/2]).
 
-% Count words in a message
-count_words(Message) when is_binary(Message) ->
-    Words = binary:split(Message, <<" ">>, [global]),
-    CleanWords = [W || W <- Words, byte_size(W) > 0],
-    length(CleanWords);
-count_words(_) ->
-    0.
+add(A, B) when is_number(A), is_number(B) ->
+    A + B;
+add(_, _) ->
+    {error, invalid_input}.
 
-% Truncate message to max length
-truncate_message(Message, MaxLen) when is_binary(Message), 
-                                       is_integer(MaxLen), 
-                                       MaxLen > 0 ->
-    if 
-        byte_size(Message) =< MaxLen -> Message;
-        true -> 
-            <<Truncated:MaxLen/binary, _/binary>> = Message,
-            <<Truncated/binary, "...">>
-    end;
-truncate_message(Message, _) when is_binary(Message) ->
-    Message;
-truncate_message(_, _) ->
-    <<"">>.
+subtract(A, B) when is_number(A), is_number(B) ->
+    A - B;
+subtract(_, _) ->
+    {error, invalid_input}.
 
-% Check if message is a command
-is_command(<<"/", _/binary>>) ->
+multiply(A, B) when is_number(A), is_number(B) ->
+    A * B;
+multiply(_, _) ->
+    {error, invalid_input}.
+
+divide(A, B) when is_number(A), is_number(B), B =/= 0 ->
+    A / B;
+divide(_, 0) ->
+    {error, division_by_zero};
+divide(_, _) ->
+    {error, invalid_input}.
+```
+
+**Exercise 2: String Utilities**
+
+Create a simple string utility module:
+
+```erlang
+-module(string_utils).
+-export([is_empty/1, length_category/1]).
+
+is_empty(<<>>) ->
     true;
-is_command(_) ->
+is_empty(_) ->
     false.
-```
 
-**Exercise 2: Pattern Matching Practice**
-
-Extend the command parser to handle more commands:
-
-```erlang
-% Add these to command_parser.erl
-parse_command(<<"/nick ", NewName/binary>>) when byte_size(NewName) > 0 ->
-    {change_nickname, NewName};
-parse_command(<<"/msg ", Rest/binary>>) ->
-    case binary:split(Rest, <<" ">>, []) of
-        [User, Message] when byte_size(User) > 0, byte_size(Message) > 0 ->
-            {private_message, User, Message};
-        _ ->
-            invalid_command
-    end;
-parse_command(<<"/rooms">>) ->
-    list_rooms.
-```
-
-**Exercise 3: Challenge**
-
-Create a `chat_history.erl` module that stores and retrieves chat messages:
-
-```erlang
--module(chat_history).
--export([add_message/3, get_recent_messages/2, get_user_messages/2]).
-
-% Add message to history (returns new history)
-add_message(User, Message, History) when is_list(History) ->
-    Timestamp = calendar:local_time(),
-    NewMessage = {message, User, Message, Timestamp},
-    [NewMessage | History].
-
-% Get N most recent messages
-get_recent_messages(History, N) when is_list(History), is_integer(N), N > 0 ->
-    lists:sublist(History, N).
-
-% Get all messages from a specific user
-get_user_messages(History, User) when is_list(History) ->
-    [Msg || Msg = {message, MsgUser, _, _} <- History, MsgUser =:= User].
+length_category(Text) when is_binary(Text), byte_size(Text) < 10 ->
+    short;
+length_category(Text) when is_binary(Text), byte_size(Text) < 50 ->
+    medium;
+length_category(Text) when is_binary(Text) ->
+    long;
+length_category(_) ->
+    invalid.
 ```
 
 ---
@@ -365,14 +233,14 @@ get_user_messages(History, User) when is_list(History) ->
 
 ## What's Next?
 
-In **Lesson 2**, we'll dive deeper into pattern matching and explore:
+In **Lesson 2**, we'll explore Erlang's most powerful feature - **pattern matching**! You'll learn how to:
 
-- Advanced list and tuple patterns
-- Case expressions and if statements
-- Variable binding rules
-- Building a message parsing system for our chat server
+- Match and extract values from lists and tuples
+- Use pattern matching in function heads
+- Build elegant parsers and data processors
+- Handle complex data structures
 
-The foundation you've built here will make everything else much easier to understand!
+The foundation you've built here will make pattern matching much easier to understand!
 
 ---
 
@@ -381,13 +249,13 @@ The foundation you've built here will make everything else much easier to unders
 Before moving on, make sure you can:
 
 1. Create a module with exported functions
-2. Use pattern matching in function heads
+2. Use different data types (atoms, binaries, tuples, lists)
 3. Write guards with `when`
-4. Handle different data types (atoms, binaries, tuples, lists)
+4. Create functions that return different values based on input
 5. Return `{ok, Value}` or `{error, Reason}` patterns
 
-If any of these feel unclear, review the examples and try the exercises again. Pattern matching is crucial for everything we'll build next!
+If any of these feel unclear, review the examples and try the exercises again. Understanding modules and functions is essential for everything we'll build next!
 
 ---
 
-_This is part of the "Learn Erlang Step-By-Step" tutorial series. Each post builds on the previous ones, so make sure you complete the exercises before moving forward._
+_This is part of the "Learn Erlang Step-By-Step" tutorial series. Each lesson builds on the previous ones, so make sure you complete the exercises before moving forward._
