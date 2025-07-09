@@ -8,8 +8,6 @@ export async function GET() {
     title: lesson.data.title,
     description: lesson.data.description,
     postNumber: lesson.data.postNumber,
-    tags: lesson.data.tags,
-    difficulty: lesson.data.difficulty,
   }));
   
   return new Response(JSON.stringify(lessonsData), {

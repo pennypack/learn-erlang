@@ -15,8 +15,7 @@ const sortedLessons = lessons.sort((a, b) => a.data.postNumber - b.data.postNumb
       </h1>
       <p class="text-xl text-gray-600 dark:text-gray-400 mb-6">
         We at <a href="https://pennypack.dev" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-500 font-medium">Pennypack Software</a> 
-        were starting a new Elixir project and decided to learn Erlang first. We built this tutorial to teach ourselves 
-        the fundamentals - and we're sharing it with you.
+        are starting a new project using Elixir. We prefer to build our understanding from the ground up, so we felt it was best to learn Erlang before learning its Ruby-fied modern incarnation. We built this tutorial to teach ourselves Erlang.
       </p>
       
       <div class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4 mb-6">
@@ -25,15 +24,17 @@ const sortedLessons = lessons.sort((a, b) => a.data.postNumber - b.data.postNumb
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
           </svg>
           <div>
-            <h3 class="font-medium text-amber-900 dark:text-amber-100 mb-1">Work in Progress</h3>
-            <p class="text-sm text-amber-700 dark:text-amber-300">We're publishing lessons as we complete them. New content gets added regularly, so check back often.</p>
+            <h3 class="font-medium text-amber-900 dark:text-amber-100 mb-1">This tutorial is a work in progress</h3>
+            <p class="text-sm text-amber-700 dark:text-amber-300">We are publishing this before it is complete to get early feedback and to provide what we can back to the community. New lessons will be posted periodically, so please check back.</p>
           </div>
         </div>
       </div>
       
+      <p class="text-lg text-gray-700 dark:text-gray-300 mb-4">
+        It is suited to our tastes with a demo project that is big enough to learn some of the main features of the language but small enough to be manageable. We added some koans to reinforce the learning.
+      </p>
       <p class="text-lg text-gray-700 dark:text-gray-300 mb-8">
-        Build a real-time WebSocket chat server from scratch using pure Erlang. No frameworks, no shortcuts - 
-        just the fundamentals that will make you understand how systems like Phoenix LiveView actually work under the hood.
+        We thought we should share this tutorial with the community. It is free for now, but we may build a paid course around it in the future.
       </p>
       
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
@@ -80,9 +81,7 @@ const sortedLessons = lessons.sort((a, b) => a.data.postNumber - b.data.postNumb
       </h2>
       
       <p class="text-gray-700 dark:text-gray-300 mb-6">
-        Joe Armstrong spent a lot of time thinking about fault-tolerant systems, and Erlang provides a brilliant framework 
-        to solve these problems in a way that few other languages do. The syntax looks odd if you're used to C-derived languages, 
-        but under the hood it works beautifully. Good luck writing fault-tolerant Python.
+        Joe Armstrong, inventor of Erlang and not the front-man of Green Day, spent a lot of time thinking about fault-tolerant systems. We particularly like his talks on the topic such as <a href="https://www.youtube.com/watch?v=cNICGEwmXLU" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-500">Systems that run forever self-heal and scale</a>. Erlang provides a brilliant framework to solve these issues in a way that few other languages do (or even allow). It's syntax is derived from Prolog, which looks odd to those of us used to C-derived syntax languages like Javascript. We consider it the opposite of Python. It looks strange and intimidating, but under the hood it works beautifully. Good luck writing fault-tolerant Python.
       </p>
       
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -199,9 +198,7 @@ const sortedLessons = lessons.sort((a, b) => a.data.postNumber - b.data.postNumb
                   {lesson.data.description}
                 </p>
                 <div class="flex items-center gap-4 text-sm">
-                  <span class="text-gray-500 dark:text-gray-400">
-                    {lesson.data.estimatedReadingTime || 10} min read
-                  </span>
+                  <!-- Reading time removed -->
                 </div>
               </div>
               

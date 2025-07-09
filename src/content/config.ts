@@ -9,7 +9,6 @@ const lessons = defineCollection({
     publishDate: z.date(),
     tags: z.array(z.string()),
     difficulty: z.enum(['beginner', 'intermediate', 'advanced']),
-    estimatedReadingTime: z.number().optional(),
     prerequisites: z.array(z.number()).optional(),
   }),
 });

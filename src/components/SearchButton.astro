@@ -68,8 +68,7 @@
     
     const results = lessons.filter(lesson => 
       lesson.title.toLowerCase().includes(query.toLowerCase()) ||
-      lesson.description.toLowerCase().includes(query.toLowerCase()) ||
-      lesson.tags.some((tag: string) => tag.toLowerCase().includes(query.toLowerCase()))
+      lesson.description.toLowerCase().includes(query.toLowerCase())
     );
     
     searchResults.innerHTML = results.length === 0 

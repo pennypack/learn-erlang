@@ -8,7 +8,6 @@ An Astro-based tutorial website for learning Erlang by building a WebSocket chat
 - 🎨 **Dark/Light Mode** - Automatic and manual theme switching
 - 🔍 **Search Functionality** - Quick post search with keyboard shortcuts
 - 📊 **Progress Tracking** - LocalStorage-based completion tracking
-- ⏱️ **Reading Time** - Estimated reading time for each post
 - 📑 **Table of Contents** - Auto-generated for longer posts
 - 🖨️ **Print-Friendly** - Optimized CSS for printing
 - ⌨️ **Keyboard Navigation** - Arrow keys for prev/next, Cmd+K for search
@@ -64,7 +63,6 @@ postNumber: 2
 publishDate: 2024-01-03T00:00:00Z
 tags: ["erlang", "concurrency"]
 difficulty: "intermediate"
-estimatedReadingTime: 20
 prerequisites: [0, 1]
 ---
 
