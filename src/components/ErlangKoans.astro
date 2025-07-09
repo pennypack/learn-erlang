@@ -5,6 +5,7 @@ export interface Props {
     question: string;
     code: string;
     answer: string;
+    validation?: string;
     hint?: string;
     explanation?: string;
   }>;
@@ -43,7 +44,7 @@ const { koans } = Astro.props;
               </div>
               
               <div class="text-gray-300">
-                <div class="koan-code-container" data-answer={koan.answer}>
+                <div class="koan-code-container" data-answer={koan.answer} data-validation={koan.validation}>
                   <div class="relative">
                     <div class="koan-code-lines">
                       {koan.code.split('\n').map((line, index) => (
@@ -115,7 +116,66 @@ const { koans } = Astro.props;
 </div>
 
 <script>
+  class KoanValidator {
+    constructor() {
+      // Ready to validate
+    }
+
+    async validateAnswer(userAnswer: string, expectedAnswer: string, validationHint: string) {
+      // For the specific case of pattern matching, we can validate semantically
+      if (validationHint === 'pattern_check') {
+        // This is a pattern matching validation
+        try {
+          // Check if it's a list that would make Second = 20
+          if (userAnswer.includes('[') && userAnswer.includes(']')) {
+            const numbers = userAnswer.replace(/\[|\]/g, '').split(',').map(n => n.trim());
+            if (numbers.length === 3 && numbers[1] === '20') {
+              return true;
+            }
+          }
+          
+          // Check if it's a tuple that would make Status = ok and Value = 42
+          if (userAnswer.includes('{') && userAnswer.includes('}')) {
+            const cleanAnswer = userAnswer.replace(/[{}]/g, '').split(',').map(s => s.trim());
+            if (cleanAnswer.length === 2 && cleanAnswer[0] === 'ok' && cleanAnswer[1] === '42') {
+              return true;
+            }
+          }
+          
+          return false;
+        } catch (error) {
+          return false;
+        }
+      }
+      
+      // For arithmetic and other value checks, allow flexible matching
+      if (validationHint === 'value_check' || !validationHint) {
+        // Remove whitespace and check if it's the expected value
+        const cleanUser = userAnswer.trim();
+        const cleanExpected = expectedAnswer.trim();
+        
+        // Try to parse as numbers for arithmetic
+        const userNum = parseFloat(cleanUser);
+        const expectedNum = parseFloat(cleanExpected);
+        
+        if (!isNaN(userNum) && !isNaN(expectedNum)) {
+          return userNum === expectedNum;
+        }
+        
+        // Otherwise do string comparison
+        return cleanUser === cleanExpected;
+      }
+      
+      // Default to string comparison
+      return userAnswer === expectedAnswer;
+    }
+  }
+
+  let validator: KoanValidator;
+
   function initializeKoans() {
+    validator = new KoanValidator();
+    
     const forms = document.querySelectorAll('.koan-form');
     
     forms.forEach(form => {
@@ -150,7 +210,7 @@ const { koans } = Astro.props;
     }
   }
 
-  function handleKoanSubmit(e: Event) {
+  async function handleKoanSubmit(e: Event) {
     e.preventDefault();
     
     const form = e.target as HTMLFormElement;
@@ -177,15 +237,30 @@ const { koans } = Astro.props;
     successMsg.classList.add('hidden');
     errorMsg.classList.add('hidden');
 
-    // Simple comparison for now - we can enhance this later with the interpreter
-    if (userAnswer === expectedAnswer) {
-      successMsg.classList.remove('hidden');
-      // resultOutput already contains "Correct!" from the HTML
-      input.style.borderColor = '#10b981'; // green
-    } else {
-      errorMsg.classList.remove('hidden');
-      errorOutput.textContent = `Expected: ${expectedAnswer}`;
-      input.style.borderColor = '#ef4444'; // red
+    // Try to validate the answer using the validator
+    try {
+      const validationHint = codeContainer.dataset.validation || 'value_check';
+      const isCorrect = await validator.validateAnswer(userAnswer, expectedAnswer || '', validationHint);
+      
+      if (isCorrect) {
+        successMsg.classList.remove('hidden');
+        // resultOutput already contains "Correct!" from the HTML
+        input.style.borderColor = '#10b981'; // green
+      } else {
+        errorMsg.classList.remove('hidden');
+        errorOutput.textContent = `Try again! Expected something that makes the code work.`;
+        input.style.borderColor = '#ef4444'; // red
+      }
+    } catch (error) {
+      // Fallback to simple string comparison if validator fails
+      if (userAnswer === expectedAnswer) {
+        successMsg.classList.remove('hidden');
+        input.style.borderColor = '#10b981'; // green
+      } else {
+        errorMsg.classList.remove('hidden');
+        errorOutput.textContent = `Expected: ${expectedAnswer}`;
+        input.style.borderColor = '#ef4444'; // red
+      }
     }
   }
 

@@ -424,9 +424,10 @@ import ErlangKoans from '../../components/ErlangKoans.astro';
   },
   {
     id: "pattern_middle",
-    question: "What variable name extracts the middle element?",
-    code: "Numbers = [10, 20, 30],\n[First, ___, Last] = Numbers,\nMiddle = 20.",
-    answer: "Middle"
+    question: "What list makes Second = 20?",
+    code: "Numbers = ___,\n[First, Second, Third] = Numbers,\nSecond = 20.",
+    answer: "[10, 20, 30]",
+    validation: "pattern_check"
   },
   {
     id: "pattern_ignore",
@@ -444,7 +445,8 @@ import ErlangKoans from '../../components/ErlangKoans.astro';
     id: "tuple_pattern",
     question: "What tuple matches this pattern?",
     code: "Result = ___,\n{Status, Value} = Result,\nStatus = ok,\nValue = 42.",
-    answer: "{ok, 42}"
+    answer: "{ok, 42}",
+    validation: "pattern_check"
   },
   {
     id: "nested_pattern",
