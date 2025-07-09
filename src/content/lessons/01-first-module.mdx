@@ -263,67 +263,52 @@ import ErlangKoans from '../../components/ErlangKoans.astro';
 <ErlangKoans koans={[
   {
     id: "arithmetic1",
-    question: "What value does A hold after this calculation?",
-    code: "Result = 5 + 3,\nA = Result,\nA = ___.",
-    answer: "8",
-    hint: "5 + 3 equals 8, so A holds the value 8",
-    explanation: "Variables store the results of expressions. Here, Result holds 8, then A gets the same value."
+    question: "What is 5 + 3?",
+    code: "Result = 5 + 3,\nResult = ___.",
+    answer: "8"
   },
   {
     id: "arithmetic2", 
-    question: "What is the result of this subtraction?",
-    code: "X = 10,\nY = 4,\nResult = X - Y,\nResult = ___.",
-    answer: "6",
-    hint: "10 - 4 equals 6",
-    explanation: "Variables can be used in arithmetic expressions. X - Y = 10 - 4 = 6."
+    question: "What is X - Y?",
+    code: "X = 10,\nY = 4,\nX - Y = ___.",
+    answer: "6"
   },
   {
     id: "variables1",
     question: "What value does MyVar hold?",
     code: "MyVar = 42,\nMyVar = ___.",
-    answer: "42",
-    hint: "Variables hold the values assigned to them",
-    explanation: "Once assigned, a variable holds that value. MyVar was assigned 42."
+    answer: "42"
   },
   {
     id: "variables2",
-    question: "What is the value of Sum?",
-    code: "A = 5,\nB = 3,\nSum = A + B,\nSum = ___.",
-    answer: "8",
-    hint: "A + B = 5 + 3 = 8",
-    explanation: "Variables can be used in calculations. A + B = 5 + 3 = 8."
+    question: "Fill in the missing variable name:",
+    code: "A = 5,\nB = 3,\n___ = A + B,\nSum = 8.",
+    answer: "Sum"
   },
   {
     id: "pattern1",
     question: "After pattern matching, what value does A hold?",
     code: "MyList = [1, 2, 3],\n[A, B, C] = MyList,\nA = ___.",
-    answer: "1",
-    hint: "Pattern matching extracts the first element of the list",
-    explanation: "Pattern matching [A, B, C] = [1, 2, 3] binds A=1, B=2, C=3."
+    answer: "1"
   },
   {
     id: "pattern2",
-    question: "What is the value of Second?",
-    code: "Numbers = [10, 20, 30],\n[First, Second, Third] = Numbers,\nSecond = ___.",
-    answer: "20",
-    hint: "Second gets the middle element of the list",
-    explanation: "Pattern matching extracts each element: First=10, Second=20, Third=30."
+    question: "What list should be used for this pattern matching?",
+    code: "Numbers = ___,\n[First, Second, Third] = Numbers,\nSecond = 20.",
+    answer: "[10, 20, 30]"
   },
   {
     id: "tuples1",
     question: "What value does Status hold?",
     code: "Result = {ok, 42},\n{Status, Value} = Result,\nStatus = ___.",
-    answer: "ok",
-    hint: "Pattern matching extracts the first element of the tuple",
-    explanation: "Pattern matching {Status, Value} = {ok, 42} binds Status=ok, Value=42."
+    answer: "ok"
   },
   {
     id: "functions1",
-    question: "What is the result of this function call?",
-    code: "Number = -5,\nResult = abs(Number),\nResult = ___.",
-    answer: "5",
-    hint: "abs() returns the absolute value, removing the negative sign",
-    explanation: "The abs function returns the absolute value of a number. abs(-5) = 5."
+    question: "What function gives the absolute value?",
+    code: "Number = -5,\nResult = ___(Number),\nResult = 5.",
+    answer: "abs",
+    hint: "The abs function returns the absolute value of a number"
   }
 ]} />
 
