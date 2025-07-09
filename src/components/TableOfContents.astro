@@ -1,11 +1,14 @@
 ---
 ---
 
-<nav class="not-prose mb-8 p-6 bg-gray-50 dark:bg-gray-900 rounded-lg">
-  <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+<nav class="not-prose mb-8 p-6 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800" id="toc-container">
+  <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+    </svg>
     Table of Contents
   </h2>
-  <ul id="toc" class="space-y-2 text-sm">
+  <ul id="toc" class="space-y-1 text-sm">
     <!-- Will be populated by JavaScript -->
   </ul>
 </nav>
@@ -13,42 +16,105 @@
 <script>
   document.addEventListener('astro:page-load', () => {
     const toc = document.getElementById('toc');
-    const content = document.getElementById('post-content');
+    const content = document.getElementById('lesson-content');
     
     if (!toc || !content) return;
     
     const headings = content.querySelectorAll('h2, h3');
     const tocItems: string[] = [];
+    const headingElements: Element[] = [];
     
-    headings.forEach((heading, index) => {
-      const id = `heading-${index}`;
-      heading.id = id;
+    headings.forEach((heading) => {
+      const text = heading.textContent || '';
+      
+      // Skip empty headings
+      if (!text.trim()) return;
+      
+      // Generate slug from heading text if no ID exists
+      if (!heading.id) {
+        const slug = text
+          .toLowerCase()
+          .trim()
+          .replace(/[^\w\s-]/g, '') // Remove special characters
+          .replace(/\s+/g, '-') // Replace spaces with hyphens
+          .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
+          .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
+        
+        heading.id = slug || `heading-${Array.from(headings).indexOf(heading)}`;
+      }
       
       const level = heading.tagName === 'H2' ? 0 : 1;
-      const text = heading.textContent || '';
+      headingElements.push(heading);
       
       tocItems.push(`
         <li class="${level === 1 ? 'ml-4' : ''}">
-          <a href="#${id}" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
+          <a href="#${heading.id}" data-heading-id="${heading.id}" class="block py-1 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">
             ${text}
           </a>
         </li>
       `);
     });
     
+    // Only show TOC if there are enough headings to warrant it
+    if (tocItems.length < 3) {
+      const tocContainer = document.getElementById('toc-container');
+      if (tocContainer) {
+        tocContainer.remove();
+      }
+      return;
+    }
+    
     toc.innerHTML = tocItems.join('');
     
-    // Smooth scroll behavior
+    // Smooth scroll behavior with offset for fixed header
     toc.querySelectorAll('a').forEach(link => {
       link.addEventListener('click', (e) => {
         e.preventDefault();
-        const target = document.querySelector(link.getAttribute('href') || '');
+        const targetId = link.getAttribute('href');
+        const target = targetId ? document.querySelector(targetId) : null;
+        
         if (target) {
-          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          // Calculate offset for any fixed headers
+          const offset = 80; // Adjust based on your header height
+          const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - offset;
+          
+          window.scrollTo({
+            top: targetPosition,
+            behavior: 'smooth'
+          });
+          
           // Update URL without triggering navigation
-          history.pushState(null, '', link.getAttribute('href') || '');
+          history.pushState(null, '', targetId);
         }
       });
+    });
+    
+    // Highlight current section on scroll
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        const id = entry.target.id;
+        const tocLink = toc.querySelector(`a[data-heading-id="${id}"]`);
+        
+        if (entry.isIntersecting) {
+          // Remove all active classes
+          toc.querySelectorAll('a').forEach(link => {
+            link.classList.remove('text-blue-600', 'dark:text-blue-400', 'font-medium');
+          });
+          
+          // Add active class to current link
+          if (tocLink) {
+            tocLink.classList.add('text-blue-600', 'dark:text-blue-400', 'font-medium');
+          }
+        }
+      });
+    }, {
+      rootMargin: '-80px 0px -70% 0px',
+      threshold: 0
+    });
+    
+    // Observe all headings
+    headingElements.forEach(heading => {
+      observer.observe(heading);
     });
   });
 </script>
