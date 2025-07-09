@@ -263,67 +263,67 @@ import ErlangKoans from '../../components/ErlangKoans.astro';
 <ErlangKoans koans={[
   {
     id: "arithmetic1",
-    question: "What is 5 + 3?",
-    code: "____",
-    answer: "5 + 3.",
-    hint: "Use the + operator and don't forget the dot at the end",
-    explanation: "Erlang uses standard arithmetic operators. Every expression must end with a dot."
+    question: "What value does A hold after this calculation?",
+    code: "Result = 5 + 3,\nA = Result,\nA = ___.",
+    answer: "8",
+    hint: "5 + 3 equals 8, so A holds the value 8",
+    explanation: "Variables store the results of expressions. Here, Result holds 8, then A gets the same value."
   },
   {
     id: "arithmetic2", 
-    question: "What is 10 - 4?",
-    code: "____",
-    answer: "10 - 4.",
-    hint: "Use the - operator",
-    explanation: "Subtraction works just like in other languages"
+    question: "What is the result of this subtraction?",
+    code: "X = 10,\nY = 4,\nResult = X - Y,\nResult = ___.",
+    answer: "6",
+    hint: "10 - 4 equals 6",
+    explanation: "Variables can be used in arithmetic expressions. X - Y = 10 - 4 = 6."
   },
   {
     id: "variables1",
-    question: "Assign the number 42 to variable X",
-    code: "____",
-    answer: "X = 42.",
-    hint: "Variables start with capital letters and use = for assignment",
-    explanation: "Variables in Erlang are immutable - once assigned, they cannot be changed within the same scope."
+    question: "What value does MyVar hold?",
+    code: "MyVar = 42,\nMyVar = ___.",
+    answer: "42",
+    hint: "Variables hold the values assigned to them",
+    explanation: "Once assigned, a variable holds that value. MyVar was assigned 42."
   },
   {
     id: "variables2",
-    question: "If you have X = 5, what expression retrieves the value of X?",
-    code: "X = 5.\n____",
-    answer: "X.",
-    hint: "Just type the variable name",
-    explanation: "Variables hold values that can be retrieved by typing the variable name"
+    question: "What is the value of Sum?",
+    code: "A = 5,\nB = 3,\nSum = A + B,\nSum = ___.",
+    answer: "8",
+    hint: "A + B = 5 + 3 = 8",
+    explanation: "Variables can be used in calculations. A + B = 5 + 3 = 8."
   },
   {
-    id: "atoms1",
-    question: "Create an atom named 'hello'",
-    code: "____",
-    answer: "hello.",
-    hint: "Atoms are lowercase constants that represent themselves",
-    explanation: "Atoms are constants like 'ok', 'error', 'hello' - they are their own value"
+    id: "pattern1",
+    question: "After pattern matching, what value does A hold?",
+    code: "MyList = [1, 2, 3],\n[A, B, C] = MyList,\nA = ___.",
+    answer: "1",
+    hint: "Pattern matching extracts the first element of the list",
+    explanation: "Pattern matching [A, B, C] = [1, 2, 3] binds A=1, B=2, C=3."
   },
   {
-    id: "lists1",
-    question: "Create a list with numbers 1, 2, 3",
-    code: "____",
-    answer: "[1, 2, 3].",
-    hint: "Lists use square brackets with comma-separated elements",
-    explanation: "Lists are ordered collections of elements enclosed in square brackets"
+    id: "pattern2",
+    question: "What is the value of Second?",
+    code: "Numbers = [10, 20, 30],\n[First, Second, Third] = Numbers,\nSecond = ___.",
+    answer: "20",
+    hint: "Second gets the middle element of the list",
+    explanation: "Pattern matching extracts each element: First=10, Second=20, Third=30."
   },
   {
     id: "tuples1",
-    question: "Create a tuple with the atom 'ok' and the number 42",
-    code: "____",
-    answer: "{ok, 42}.",
-    hint: "Tuples use curly braces with comma-separated elements",
-    explanation: "Tuples are fixed-size containers often used for returning multiple values"
+    question: "What value does Status hold?",
+    code: "Result = {ok, 42},\n{Status, Value} = Result,\nStatus = ___.",
+    answer: "ok",
+    hint: "Pattern matching extracts the first element of the tuple",
+    explanation: "Pattern matching {Status, Value} = {ok, 42} binds Status=ok, Value=42."
   },
   {
     id: "functions1",
-    question: "Call the built-in abs function with the argument -5",
-    code: "____",
-    answer: "abs(-5).",
-    hint: "Function calls use parentheses: function_name(arguments)",
-    explanation: "The abs function returns the absolute value of a number"
+    question: "What is the result of this function call?",
+    code: "Number = -5,\nResult = abs(Number),\nResult = ___.",
+    answer: "5",
+    hint: "abs() returns the absolute value, removing the negative sign",
+    explanation: "The abs function returns the absolute value of a number. abs(-5) = 5."
   }
 ]} />
 

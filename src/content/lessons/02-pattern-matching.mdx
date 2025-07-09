@@ -413,4 +413,59 @@ If any of these feel unclear, review the examples and try the exercises again. P
 
 ---
 
+import ErlangKoans from '../../components/ErlangKoans.astro';
+
+<ErlangKoans koans={[
+  {
+    id: "pattern_basic",
+    question: "What value does A hold after pattern matching?",
+    code: "MyList = [1, 2, 3],\n[A, B, C] = MyList,\nA = ___.",
+    answer: "1",
+    hint: "Pattern matching extracts the first element of the list",
+    explanation: "Pattern matching [A, B, C] = [1, 2, 3] binds A to the first element, which is 1."
+  },
+  {
+    id: "pattern_middle",
+    question: "What is the value of Middle?",
+    code: "Numbers = [10, 20, 30],\n[First, Middle, Last] = Numbers,\nMiddle = ___.",
+    answer: "20",
+    hint: "Middle gets the second element of the list",
+    explanation: "Pattern matching extracts each element: First=10, Middle=20, Last=30."
+  },
+  {
+    id: "pattern_ignore",
+    question: "What value does Third hold when using underscore?",
+    code: "Data = [5, 10, 15],\n[_, _, Third] = Data,\nThird = ___.",
+    answer: "15",
+    hint: "Underscore ignores values, Third gets the last element",
+    explanation: "Using _ ignores the first two elements, Third gets the third element (15)."
+  },
+  {
+    id: "head_tail",
+    question: "What is the value of Head?",
+    code: "List = [1, 2, 3, 4],\n[Head | Tail] = List,\nHead = ___.",
+    answer: "1",
+    hint: "Head | Tail pattern extracts the first element as Head",
+    explanation: "The [Head | Tail] pattern matches Head to the first element (1) and Tail to the rest [2, 3, 4]."
+  },
+  {
+    id: "tuple_pattern",
+    question: "What value does Status hold?",
+    code: "Result = {ok, 42},\n{Status, Value} = Result,\nStatus = ___.",
+    answer: "ok",
+    hint: "Pattern matching extracts the first element of the tuple",
+    explanation: "Pattern matching {Status, Value} = {ok, 42} binds Status to 'ok' and Value to 42."
+  },
+  {
+    id: "nested_pattern",
+    question: "What is the value of Inner?",
+    code: "Complex = {user, {name, alice}},\n{Type, {Key, Inner}} = Complex,\nInner = ___.",
+    answer: "alice",
+    hint: "Nested pattern matching extracts deeply nested values",
+    explanation: "Nested pattern matching extracts Inner from the inner tuple: alice."
+  }
+]} />
+
+---
+
 _This is part of the "Learn Erlang Step-By-Step" tutorial series. Each lesson builds on the previous ones, so make sure you complete the exercises before moving forward._

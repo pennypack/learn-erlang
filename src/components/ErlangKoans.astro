@@ -43,11 +43,17 @@ const { koans } = Astro.props;
               </div>
               
               <div class="text-gray-300">
-                <div class="flex items-center gap-2">
-                  <span class="text-blue-400">1></span>
-                  <div class="flex-1 relative">
-                    <div class="koan-code-container" data-answer={koan.answer}>
-                      <span class="text-white whitespace-pre-wrap" set:html={koan.code.replace(/____/g, '<span class="koan-blank">____</span>')} />
+                <div class="koan-code-container" data-answer={koan.answer}>
+                  <div class="relative">
+                    <div class="koan-code-lines">
+                      {koan.code.split('\n').map((line, index) => (
+                        <div class="flex items-start gap-2">
+                          <span class="text-blue-400 select-none" style="min-width: 24px;">
+                            {index === 0 ? '1>' : '1>'}
+                          </span>
+                          <span class="text-white whitespace-pre-wrap flex-1" set:html={line.replace(/___/g, '<span class="koan-blank">___</span>')} />
+                        </div>
+                      ))}
                     </div>
                     <input 
                       type="text" 
@@ -138,7 +144,7 @@ const { koans } = Astro.props;
         const containerRect = container.getBoundingClientRect();
         input.style.left = `${blankRect.left - containerRect.left}px`;
         input.style.top = `${blankRect.top - containerRect.top}px`;
-        input.style.width = `${Math.max(blankRect.width, 80)}px`;
+        input.style.width = `${Math.max(blankRect.width, 60)}px`;
         input.style.height = `${blankRect.height}px`;
       }
     }
@@ -208,11 +214,12 @@ const { koans } = Astro.props;
     background: rgba(59, 130, 246, 0.2);
     border: 1px dashed rgba(59, 130, 246, 0.5);
     border-radius: 3px;
-    padding: 2px 4px;
+    padding: 2px 6px;
     display: inline-block;
-    min-width: 60px;
+    min-width: 50px;
     text-align: center;
     position: relative;
+    font-weight: bold;
   }
   
   .koan-input {
