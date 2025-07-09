@@ -183,7 +183,37 @@ Create `src/chat_server.app.src`:
 - `mod` - Entry point module when application starts
 - `env` - Configuration variables
 
-### 4. Project Structure Overview
+### 4. Create the Application Module
+
+Create `src/chat_server_app.erl` with minimal code:
+
+```erlang
+-module(chat_server_app).
+-behaviour(application).
+
+-export([start/2, stop/1]).
+
+start(_StartType, _StartArgs) ->
+    {ok, spawn(fun() -> loop() end)}.
+
+stop(_State) ->
+    ok.
+
+% Simple loop to keep the process alive
+loop() ->
+    receive
+        stop -> ok
+    end.
+```
+
+**What this does:**
+
+- Implements the `application` behaviour
+- `start/2` is called when the application starts
+- Returns `{ok, Pid}` where Pid is a process that stays alive
+- `stop/1` is called when the application stops
+
+### 5. Project Structure Overview
 
 Your project should now look like this:
 
@@ -191,7 +221,8 @@ Your project should now look like this:
 erlang_chat/
 ├── rebar.config          # Build configuration
 ├── src/                  # Erlang source files (.erl)
-│   └── chat_server.app.src  # Application specification
+│   ├── chat_server.app.src  # Application specification
+│   └── chat_server_app.erl  # Application module
 ├── priv/                 # Static files (HTML, CSS, JS)
 └── _build/               # Compiled files (created by rebar3)
 ```
@@ -231,13 +262,18 @@ Eshell V14.0  (abort with ^G)
 1>
 ```
 
+Your application will automatically start when you run `rebar3 shell`.
+
 ### Basic Shell Commands
 
 Try these commands to get familiar:
 
 ```erlang
-% Check what's loaded
+% Check what's loaded (you should see chat_server in the list)
 1> application:which_applications().
+[{chat_server,"WebSocket Chat Server","0.1.0"},
+ {stdlib,"ERTS  CXC 138 10","5.0"},
+ {kernel,"ERTS  CXC 138 10","9.0"}]
 
 % Simple arithmetic
 2> 2 + 3.
