@@ -68,7 +68,7 @@ const { koans } = Astro.props;
               <div class="flex items-center justify-between mt-3">
                 <div class="koan-result" data-koan-id={koan.id}>
                   <div class="success-message hidden text-green-400 text-sm">
-                    <span class="text-blue-400">2></span> <span class="result-output"></span>
+                    <span class="text-blue-400">2></span> <span class="result-output">Correct!</span>
                   </div>
                   
                   <div class="error-message hidden text-red-400 text-sm">
@@ -180,7 +180,7 @@ const { koans } = Astro.props;
     // Simple comparison for now - we can enhance this later with the interpreter
     if (userAnswer === expectedAnswer) {
       successMsg.classList.remove('hidden');
-      resultOutput.textContent = expectedAnswer; // Show the result
+      // resultOutput already contains "Correct!" from the HTML
       input.style.borderColor = '#10b981'; // green
     } else {
       errorMsg.classList.remove('hidden');
