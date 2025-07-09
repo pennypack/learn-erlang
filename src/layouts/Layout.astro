@@ -74,6 +74,9 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
   <body class="min-h-screen flex flex-col">
     <Header />
     
+    <!-- Mobile Sidebar Overlay -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden hidden transition-opacity duration-200"></div>
+    
     <div class="flex-1 flex">
       <Sidebar />
       
