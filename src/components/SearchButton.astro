@@ -93,5 +93,11 @@
   // ESC to close
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeSearch();
+    
+    // Cmd+K / Ctrl+K to open search
+    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      e.preventDefault();
+      openSearch();
+    }
   });
 </script>

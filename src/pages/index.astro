@@ -14,42 +14,76 @@ const sortedLessons = lessons.sort((a, b) => a.data.postNumber - b.data.postNumb
         Learn Erlang Step-By-Step
       </h1>
       <p class="text-xl text-gray-600 dark:text-gray-400 mb-6">
-        Build a real-time WebSocket chat server from scratch using pure Erlang. 
-        No frameworks, no shortcuts - just the fundamentals that will make you 
-        understand how systems like Phoenix LiveView actually work.
+        We at <a href="https://pennypack.dev" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-500 font-medium">Pennypack Software</a> 
+        were starting a new Elixir project and decided to learn Erlang first. We built this tutorial to teach ourselves 
+        the fundamentals - and we're sharing it with you.
+      </p>
+      
+      <div class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4 mb-6">
+        <div class="flex items-start space-x-3">
+          <svg class="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+          </svg>
+          <div>
+            <h3 class="font-medium text-amber-900 dark:text-amber-100 mb-1">Work in Progress</h3>
+            <p class="text-sm text-amber-700 dark:text-amber-300">We're publishing lessons as we complete them. New content gets added regularly, so check back often.</p>
+          </div>
+        </div>
+      </div>
+      
+      <p class="text-lg text-gray-700 dark:text-gray-300 mb-8">
+        Build a real-time WebSocket chat server from scratch using pure Erlang. No frameworks, no shortcuts - 
+        just the fundamentals that will make you understand how systems like Phoenix LiveView actually work under the hood.
       </p>
       
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
-          <h3 class="font-semibold text-blue-900 dark:text-blue-100 mb-2">🎯 Practical Project</h3>
-          <p class="text-sm text-blue-700 dark:text-blue-300">Build a complete WebSocket chat server</p>
+          <h3 class="font-semibold text-blue-900 dark:text-blue-100 mb-2">Practical Project</h3>
+          <p class="text-sm text-blue-700 dark:text-blue-300">Build a complete WebSocket chat server that can handle thousands of concurrent users</p>
         </div>
         <div class="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg">
-          <h3 class="font-semibold text-green-900 dark:text-green-100 mb-2">🚀 From Zero to Hero</h3>
-          <p class="text-sm text-green-700 dark:text-green-300">No prior Erlang knowledge required</p>
+          <h3 class="font-semibold text-green-900 dark:text-green-100 mb-2">Interactive Learning</h3>
+          <p class="text-sm text-green-700 dark:text-green-300">Fill-in-the-blank koans reinforce key concepts with hands-on practice</p>
         </div>
         <div class="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg">
-          <h3 class="font-semibold text-purple-900 dark:text-purple-100 mb-2">⚡ Real-world Skills</h3>
-          <p class="text-sm text-purple-700 dark:text-purple-300">Learn OTP patterns used in production</p>
+          <h3 class="font-semibold text-purple-900 dark:text-purple-100 mb-2">Production Patterns</h3>
+          <p class="text-sm text-purple-700 dark:text-purple-300">Learn OTP behaviors and fault-tolerance techniques used in real systems</p>
         </div>
       </div>
       
-      <a
-        href={`/lessons/${sortedLessons[0].slug}`}
-        class="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
-      >
-        Start Learning
-        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
-        </svg>
-      </a>
+      <div class="flex flex-col sm:flex-row gap-4">
+        <a
+          href={`/lessons/${sortedLessons[0].slug}`}
+          class="inline-flex items-center justify-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
+        >
+          Start with Setup
+          <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+          </svg>
+        </a>
+        <a
+          href={`/lessons/${sortedLessons[1]?.slug || sortedLessons[0].slug}`}
+          class="inline-flex items-center justify-center px-6 py-3 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-900 dark:text-gray-100 font-medium rounded-lg transition-colors"
+        >
+          Jump to Lesson 1
+          <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+          </svg>
+        </a>
+      </div>
     </section>
     
     <!-- What You'll Learn -->
     <section class="mb-12">
-      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">
-        What You'll Learn
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+        Why Learn Erlang?
       </h2>
+      
+      <p class="text-gray-700 dark:text-gray-300 mb-6">
+        Joe Armstrong spent a lot of time thinking about fault-tolerant systems, and Erlang provides a brilliant framework 
+        to solve these problems in a way that few other languages do. The syntax looks odd if you're used to C-derived languages, 
+        but under the hood it works beautifully. Good luck writing fault-tolerant Python.
+      </p>
       
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div class="space-y-4">
@@ -59,7 +93,7 @@ const sortedLessons = lessons.sort((a, b) => a.data.postNumber - b.data.postNumb
             </svg>
             <div>
               <h3 class="font-medium text-gray-900 dark:text-gray-100">The Actor Model</h3>
-              <p class="text-sm text-gray-600 dark:text-gray-400">Understand lightweight processes and message passing</p>
+              <p class="text-sm text-gray-600 dark:text-gray-400">Millions of lightweight processes that communicate through message passing</p>
             </div>
           </div>
           
@@ -69,7 +103,7 @@ const sortedLessons = lessons.sort((a, b) => a.data.postNumber - b.data.postNumb
             </svg>
             <div>
               <h3 class="font-medium text-gray-900 dark:text-gray-100">Fault Tolerance</h3>
-              <p class="text-sm text-gray-600 dark:text-gray-400">Master the "let it crash" philosophy</p>
+              <p class="text-sm text-gray-600 dark:text-gray-400">The famous "let it crash" philosophy that keeps systems running</p>
             </div>
           </div>
           
@@ -79,7 +113,7 @@ const sortedLessons = lessons.sort((a, b) => a.data.postNumber - b.data.postNumb
             </svg>
             <div>
               <h3 class="font-medium text-gray-900 dark:text-gray-100">OTP Behaviors</h3>
-              <p class="text-sm text-gray-600 dark:text-gray-400">Use battle-tested patterns for robust systems</p>
+              <p class="text-sm text-gray-600 dark:text-gray-400">Battle-tested patterns that have been running telecom systems for decades</p>
             </div>
           </div>
         </div>
@@ -91,7 +125,7 @@ const sortedLessons = lessons.sort((a, b) => a.data.postNumber - b.data.postNumb
             </svg>
             <div>
               <h3 class="font-medium text-gray-900 dark:text-gray-100">Hot Code Reloading</h3>
-              <p class="text-sm text-gray-600 dark:text-gray-400">Update systems without downtime</p>
+              <p class="text-sm text-gray-600 dark:text-gray-400">Update running systems without downtime or losing state</p>
             </div>
           </div>
           
@@ -100,8 +134,8 @@ const sortedLessons = lessons.sort((a, b) => a.data.postNumber - b.data.postNumb
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
             <div>
-              <h3 class="font-medium text-gray-900 dark:text-gray-100">WebSocket Implementation</h3>
-              <p class="text-sm text-gray-600 dark:text-gray-400">Build real-time communication from scratch</p>
+              <h3 class="font-medium text-gray-900 dark:text-gray-100">Raw Network Programming</h3>
+              <p class="text-sm text-gray-600 dark:text-gray-400">Build TCP servers and WebSocket protocols from scratch</p>
             </div>
           </div>
           
@@ -110,8 +144,8 @@ const sortedLessons = lessons.sort((a, b) => a.data.postNumber - b.data.postNumb
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
             <div>
-              <h3 class="font-medium text-gray-900 dark:text-gray-100">Production Patterns</h3>
-              <p class="text-sm text-gray-600 dark:text-gray-400">Learn techniques used in real-world systems</p>
+              <h3 class="font-medium text-gray-900 dark:text-gray-100">Real-world Patterns</h3>
+              <p class="text-sm text-gray-600 dark:text-gray-400">The techniques powering WhatsApp, Discord, and Phoenix LiveView</p>
             </div>
           </div>
         </div>
@@ -120,9 +154,30 @@ const sortedLessons = lessons.sort((a, b) => a.data.postNumber - b.data.postNumb
     
     <!-- Course Outline -->
     <section>
-      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">
-        Course Outline
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+        Tutorial Structure
       </h2>
+      
+      <p class="text-gray-700 dark:text-gray-300 mb-6">
+        We've structured the tutorial in three phases. Each lesson builds on the previous ones, 
+        so you'll want to follow them in order. The koans (interactive exercises) test your understanding 
+        as you go, making sure the concepts stick.
+      </p>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
+          <h3 class="font-semibold text-blue-900 dark:text-blue-100 mb-2">Foundation (Lessons 1-8)</h3>
+          <p class="text-sm text-blue-700 dark:text-blue-300">Basic syntax, pattern matching, and process fundamentals</p>
+        </div>
+        <div class="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg">
+          <h3 class="font-semibold text-green-900 dark:text-green-100 mb-2">Building (Lessons 9-20)</h3>
+          <p class="text-sm text-green-700 dark:text-green-300">OTP patterns, TCP/WebSocket implementation, chat server</p>
+        </div>
+        <div class="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg">
+          <h3 class="font-semibold text-purple-900 dark:text-purple-100 mb-2">Advanced (Lessons 21-35)</h3>
+          <p class="text-sm text-purple-700 dark:text-purple-300">Production features, distributed systems, operations</p>
+        </div>
+      </div>
       
       <div class="space-y-4">
         {sortedLessons.map((lesson) => (

@@ -1,0 +1,51 @@
+---
+title: "WebSocket Protocol Implementation"
+description: "Implement the WebSocket protocol from scratch - handshake negotiation, frame parsing, and message encoding for real-time chat communication"
+postNumber: 15
+publishDate: 2024-01-16T00:00:00Z
+tags: ["websocket", "protocol-implementation", "real-time", "handshake"]
+difficulty: "advanced"
+estimatedReadingTime: 35
+prerequisites: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+---
+
+# WebSocket Protocol Implementation
+
+## Coming Soon
+
+This lesson will guide you through implementing the WebSocket protocol from scratch in pure Erlang. You'll learn how to:
+
+- Implement WebSocket handshake negotiation
+- Parse and generate WebSocket frames
+- Handle different frame types (text, binary, ping, pong, close)
+- Implement masking and unmasking for security
+- Build real-time bidirectional communication
+
+### What You'll Build
+
+By the end of this lesson, you'll have implemented:
+- Complete WebSocket handshake handling
+- WebSocket frame parsing and generation
+- Support for all WebSocket frame types
+- Connection upgrade from HTTP to WebSocket
+- Real-time communication foundation for your chat server
+
+### Key Concepts Preview
+
+```erlang
+% WebSocket handshake
+generate_accept_key(Key) ->
+    Magic = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11",
+    Hash = crypto:hash(sha, Key ++ Magic),
+    base64:encode(Hash).
+
+% Frame parsing
+parse_frame(<<FIN:1, _RSV:3, Opcode:4, Mask:1, PayloadLen:7, Rest/binary>>) ->
+    parse_payload(FIN, Opcode, Mask, PayloadLen, Rest).
+```
+
+This lesson builds on the HTTP request handling from Lesson 14 and prepares you for building the chat server core in Lesson 16.
+
+---
+
+_This lesson is currently under development. Check back soon for the complete content!_

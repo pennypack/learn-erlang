@@ -1,0 +1,48 @@
+---
+title: "Introduction to Processes"
+description: "Discover Erlang's lightweight processes, the foundation of concurrent programming and the actor model that powers fault-tolerant systems"
+postNumber: 7
+publishDate: 2024-01-08T00:00:00Z
+tags: ["processes", "concurrency", "actor-model", "isolation"]
+difficulty: "intermediate"
+estimatedReadingTime: 20
+prerequisites: [0, 1, 2, 3, 4, 5, 6]
+---
+
+# Introduction to Processes
+
+## Coming Soon
+
+This lesson introduces Erlang's revolutionary process model - lightweight, isolated processes that communicate through message passing. You'll learn how to:
+
+- Create and manage Erlang processes
+- Understand process isolation and fault containment
+- Implement the actor model for concurrent programming
+- Use spawn, self, and process identifiers (PIDs)
+- Build your first concurrent chat server components
+
+### What You'll Build
+
+By the end of this lesson, you'll have implemented:
+- Basic process creation and management
+- Simple message passing between processes
+- Process monitoring and lifecycle management
+- A foundation for concurrent chat server architecture
+- Your first actor-based components
+
+### Key Concepts Preview
+
+```erlang
+% Creating processes
+Pid = spawn(fun() -> chat_user_process() end),
+Pid ! {message, "Hello from another process"}.
+
+% Process isolation
+self() ! {internal_message, data}.
+```
+
+This lesson builds on the error handling patterns from Lesson 6 and prepares you for the inter-process communication we'll explore in Lesson 8.
+
+---
+
+_This lesson is currently under development. Check back soon for the complete content!_

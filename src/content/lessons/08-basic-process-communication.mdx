@@ -1,0 +1,52 @@
+---
+title: "Basic Process Communication"
+description: "Learn message passing, process linking, and basic supervision patterns to build reliable concurrent systems for your chat server"
+postNumber: 8
+publishDate: 2024-01-09T00:00:00Z
+tags: ["message-passing", "process-linking", "supervision", "communication"]
+difficulty: "intermediate"
+estimatedReadingTime: 24
+prerequisites: [0, 1, 2, 3, 4, 5, 6, 7]
+---
+
+# Basic Process Communication
+
+## Coming Soon
+
+This lesson will teach you how processes communicate and coordinate in Erlang systems. You'll learn how to:
+
+- Send and receive messages between processes
+- Implement synchronous and asynchronous communication patterns
+- Use process linking for fault propagation
+- Create basic supervision relationships
+- Build reliable message-passing protocols
+
+### What You'll Build
+
+By the end of this lesson, you'll have implemented:
+- A chat user process that handles messages
+- Process linking for fault tolerance
+- Basic supervision patterns
+- Message protocol design for chat operations
+- A foundation for the OTP patterns to come
+
+### Key Concepts Preview
+
+```erlang
+% Message passing
+UserPid ! {send_message, "Hello world"},
+receive
+    {message_sent, Result} -> handle_result(Result);
+    {error, Reason} -> handle_error(Reason)
+end.
+
+% Process linking
+link(UserPid),
+trap_exit(true).
+```
+
+This lesson completes the Foundation Phase by building on the process creation from Lesson 7 and prepares you for the OTP principles we'll explore in Lesson 9.
+
+---
+
+_This lesson is currently under development. Check back soon for the complete content!_

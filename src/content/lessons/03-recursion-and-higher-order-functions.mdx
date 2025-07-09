@@ -1,0 +1,49 @@
+---
+title: "Recursion and Higher-Order Functions"
+description: "Master recursive functions and higher-order operations like map, filter, and fold to build efficient data processing systems for our chat server"
+postNumber: 3
+publishDate: 2024-01-04T00:00:00Z
+tags: ["recursion", "higher-order-functions", "data-processing", "functional-programming"]
+difficulty: "beginner"
+estimatedReadingTime: 20
+prerequisites: [0, 1, 2]
+---
+
+# Recursion and Higher-Order Functions
+
+## Coming Soon
+
+This lesson will cover Erlang's powerful recursive programming model and higher-order functions that make data processing elegant and efficient. You'll learn how to:
+
+- Write recursive functions that process lists and trees
+- Use map, filter, and fold operations for data transformation
+- Build a message history system for our chat server
+- Understand tail recursion and performance optimization
+- Apply functional programming patterns to real-world problems
+
+### What You'll Build
+
+By the end of this lesson, you'll have implemented:
+- A recursive message processor that handles chat history
+- List manipulation functions using higher-order operations
+- Efficient data transformation pipelines
+- A foundation for the chat server's message handling system
+
+### Key Concepts Preview
+
+```erlang
+% Recursive list processing
+process_messages([]) -> [];
+process_messages([Message | Rest]) ->
+    [transform_message(Message) | process_messages(Rest)].
+
+% Higher-order functions
+Messages = ["hello", "world", "chat"],
+UpperMessages = lists:map(fun string:uppercase/1, Messages).
+```
+
+This lesson builds directly on the pattern matching skills from Lesson 2 and prepares you for the process-based architecture we'll explore in Lesson 4.
+
+---
+
+_This lesson is currently under development. Check back soon for the complete content!_

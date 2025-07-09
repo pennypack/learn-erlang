@@ -1,0 +1,37 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Erlang Cheatsheet" description="Quick reference guide for Erlang syntax and common patterns">
+  <div class="prose prose-lg dark:prose-invert max-w-none">
+    <h1>Erlang Cheatsheet</h1>
+    
+    <p>A quick reference guide for Erlang syntax and common patterns.</p>
+    
+    <div class="not-prose mt-8 p-6 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+      <h2 class="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-4">Coming Soon</h2>
+      <p class="text-blue-800 dark:text-blue-200">
+        This cheatsheet is currently under construction. Check back soon for:
+      </p>
+      <ul class="mt-3 space-y-2 text-blue-800 dark:text-blue-200">
+        <li>• Basic syntax reference</li>
+        <li>• Pattern matching examples</li>
+        <li>• Common functions and modules</li>
+        <li>• OTP patterns</li>
+      </ul>
+    </div>
+    
+    <div class="mt-8">
+      <h2>Basic Syntax</h2>
+      <div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg">
+        <pre><code>% Comments start with %
+-module(example).
+-export([function_name/1]).
+
+function_name(Arg) ->
+    Result = Arg + 1,
+    Result.</code></pre>
+      </div>
+    </div>
+  </div>
+</Layout>

@@ -1,0 +1,49 @@
+---
+title: "Records and Complex Data Structures"
+description: "Learn to define and work with records, nested data structures, and type-safe data modeling for scalable chat server architecture"
+postNumber: 5
+publishDate: 2024-01-06T00:00:00Z
+tags: ["records", "data-structures", "type-safety", "modeling"]
+difficulty: "intermediate"
+estimatedReadingTime: 16
+prerequisites: [0, 1, 2, 3, 4]
+---
+
+# Records and Complex Data Structures
+
+## Coming Soon
+
+This lesson will teach you how to define and work with Erlang records and complex data structures. You'll learn how to:
+
+- Define custom record types for structured data
+- Create nested data structures for complex domain models
+- Use type-safe patterns for data validation
+- Build efficient data access and manipulation functions
+- Design scalable data models for chat server entities
+
+### What You'll Build
+
+By the end of this lesson, you'll have implemented:
+- User and message record definitions
+- Chat room and channel data structures
+- Type-safe data access patterns
+- Validation functions for complex data types
+- A foundation for the chat server's data layer
+
+### Key Concepts Preview
+
+```erlang
+% Record definitions
+-record(user, {id, name, email, status, joined_at}).
+-record(message, {id, user_id, room_id, content, timestamp}).
+
+% Type-safe data access
+User = #user{name="Alice", status=online},
+UserName = User#user.name.
+```
+
+This lesson builds on the data manipulation skills from Lesson 4 and prepares you for the error handling patterns we'll explore in Lesson 6.
+
+---
+
+_This lesson is currently under development. Check back soon for the complete content!_

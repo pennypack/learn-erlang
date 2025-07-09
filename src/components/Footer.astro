@@ -1,0 +1,108 @@
+---
+// Footer component for Learn Erlang site
+---
+
+<footer class="bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 mt-16">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+      
+      <!-- About Section -->
+      <div class="col-span-1 md:col-span-2">
+        <div class="flex items-center space-x-2 mb-4">
+          <span class="text-2xl">🐰</span>
+          <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100">
+            Learn Erlang Step-By-Step
+          </h3>
+        </div>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">
+          A comprehensive tutorial for learning Erlang by building a real-time WebSocket chat server from scratch.
+          Created with love by the team at Pennypack Software.
+        </p>
+        <div class="flex items-center space-x-4">
+          <a
+            href="https://pennypack.dev"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md transition-colors"
+          >
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+            </svg>
+            Visit Pennypack Software
+          </a>
+          <a
+            href="mailto:feedback@pennypack.dev?subject=Learn Erlang Tutorial Feedback"
+            class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+          >
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+          </a>
+        </div>
+      </div>
+      
+      <!-- Tutorial Links -->
+      <div>
+        <h4 class="text-sm font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wider mb-4">
+          Tutorial
+        </h4>
+        <div class="space-y-2">
+          <a href="/" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 text-sm">
+            Getting Started
+          </a>
+          <a href="/resources" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 text-sm">
+            Resources
+          </a>
+          <a href="/cheatsheet" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 text-sm">
+            Cheatsheet
+          </a>
+          <a href="mailto:feedback@pennypack.dev?subject=Learn Erlang Tutorial Feedback" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 text-sm">
+            Send Feedback
+          </a>
+        </div>
+      </div>
+      
+      <!-- Pennypack Software -->
+      <div>
+        <h4 class="text-sm font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wider mb-4">
+          Pennypack Software
+        </h4>
+        <div class="space-y-2">
+          <a href="https://pennypack.dev" target="_blank" rel="noopener noreferrer" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 text-sm">
+            Home
+          </a>
+          <a href="https://pennypack.dev/about" target="_blank" rel="noopener noreferrer" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 text-sm">
+            About Us
+          </a>
+          <a href="https://pennypack.dev/blog" target="_blank" rel="noopener noreferrer" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 text-sm">
+            Blog
+          </a>
+          <a href="https://pennypack.dev/contact" target="_blank" rel="noopener noreferrer" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 text-sm">
+            Contact
+          </a>
+        </div>
+      </div>
+      
+    </div>
+    
+    <!-- Bottom Bar -->
+    <div class="mt-8 pt-8 border-t border-gray-200 dark:border-gray-800">
+      <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+        <p class="text-gray-600 dark:text-gray-400 text-sm">
+          © {new Date().getFullYear()} <a href="https://pennypack.dev" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-500 font-medium">Pennypack Software LLC</a>. 
+          All rights reserved.
+        </p>
+        <div class="flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-400">
+          <span>Built with</span>
+          <a href="https://astro.build" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-500">
+            Astro
+          </a>
+          <span>and</span>
+          <a href="https://tailwindcss.com" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-500">
+            Tailwind CSS
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>

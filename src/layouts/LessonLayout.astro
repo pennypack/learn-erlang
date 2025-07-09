@@ -26,8 +26,6 @@ const sortedLessons = allLessons.sort((a, b) => a.data.postNumber - b.data.postN
 const currentIndex = sortedLessons.findIndex(l => l.data.postNumber === postNumber);
 const prevLesson = currentIndex > 0 ? sortedLessons[currentIndex - 1] : null;
 const nextLesson = currentIndex < sortedLessons.length - 1 ? sortedLessons[currentIndex + 1] : null;
-
-const gitHubEditUrl = `https://github.com/yourusername/learn-erlang/edit/main/src/content/lessons/${sortedLessons[currentIndex].id}`;
 ---
 
 <Layout title={title} description={description}>
@@ -61,15 +59,13 @@ const gitHubEditUrl = `https://github.com/yourusername/learn-erlang/edit/main/sr
         </div>
         
         <a
-          href={gitHubEditUrl}
-          target="_blank"
-          rel="noopener noreferrer"
+          href="mailto:feedback@pennypack.dev?subject=Feedback on Lesson {postNumber}: {title}"
           class="ml-auto flex items-center gap-1 hover:text-gray-900 dark:hover:text-gray-100"
         >
-          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
           </svg>
-          Edit this page
+          Send Feedback
         </a>
       </div>
       
@@ -118,10 +114,28 @@ const gitHubEditUrl = `https://github.com/yourusername/learn-erlang/edit/main/sr
           id="mark-complete"
           data-lesson-number={postNumber}
           class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md font-medium transition-colors"
+          aria-label="Mark this lesson as complete"
         >
           Mark as Complete
         </button>
       </div>
+    </div>
+    
+    <!-- Attribution -->
+    <div class="not-prose mt-8 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-center">
+      <p class="text-sm text-gray-600 dark:text-gray-400">
+        This tutorial is brought to you by 
+        <a href="https://pennypack.dev" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-500 font-medium">
+          Pennypack Software
+        </a>
+        - we build reliable software systems.
+      </p>
+      <p class="text-xs text-gray-500 dark:text-gray-500 mt-2">
+        Questions or feedback? Email us at 
+        <a href="mailto:feedback@pennypack.dev?subject=Feedback on Lesson {postNumber}: {title}" class="text-blue-600 hover:text-blue-500">
+          feedback@pennypack.dev
+        </a>
+      </p>
     </div>
     
     <!-- Navigation -->
