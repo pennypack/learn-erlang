@@ -3,6 +3,7 @@ export interface Props {
   koans: Array<{
     id: string;
     question: string;
+    code: string;
     answer: string;
     hint?: string;
     explanation?: string;
@@ -19,50 +20,66 @@ const { koans } = Astro.props;
   </div>
   
   <p class="text-sm text-yellow-800 dark:text-yellow-200 mb-6">
-    Fill in the blanks to test your knowledge. These run real Erlang code!
+    Fill in the blanks and press Enter or click Run to test your knowledge!
   </p>
   
   <div class="space-y-6">
     {koans.map((koan) => (
       <div class="koan-item" data-koan-id={koan.id}>
         <div class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-yellow-300 dark:border-yellow-700">
-          <div class="mb-3">
-            <h4 class="font-medium text-gray-900 dark:text-gray-100 mb-2">
-              {koan.question}
-            </h4>
-            
-            <div class="bg-gray-50 dark:bg-gray-900 rounded p-3 font-mono text-sm">
-              <div class="koan-code" data-answer={koan.answer}>
-                <code>{koan.answer}</code>
+          <h4 class="font-medium text-gray-900 dark:text-gray-100 mb-4">
+            {koan.question}
+          </h4>
+          
+          <form class="koan-form" data-koan-id={koan.id}>
+            <div class="relative bg-gray-900 dark:bg-gray-950 rounded-lg p-4 font-mono text-sm">
+              <div class="flex items-center gap-2 mb-3">
+                <div class="flex gap-1">
+                  <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                  <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                  <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                </div>
+                <span class="text-gray-400 text-xs">Erlang Shell</span>
+              </div>
+              
+              <div class="text-gray-300">
+                <div class="flex items-center gap-2">
+                  <span class="text-blue-400">1></span>
+                  <div class="flex-1 relative">
+                    <div class="koan-code-container" data-answer={koan.answer}>
+                      <span class="text-white whitespace-pre-wrap" set:html={koan.code.replace(/____/g, '<span class="koan-blank">____</span>')} />
+                    </div>
+                    <input 
+                      type="text" 
+                      class="koan-input"
+                      placeholder=""
+                      data-koan-id={koan.id}
+                    />
+                  </div>
+                </div>
+              </div>
+              
+              <div class="flex items-center justify-between mt-3">
+                <div class="koan-result" data-koan-id={koan.id}>
+                  <div class="success-message hidden text-green-400 text-sm">
+                    <span class="text-blue-400">2></span> <span class="result-output"></span>
+                  </div>
+                  
+                  <div class="error-message hidden text-red-400 text-sm">
+                    <span class="text-red-400">**</span> <span class="error-output"></span>
+                  </div>
+                </div>
+                
+                <button 
+                  type="submit"
+                  class="koan-run-btn px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded text-xs font-medium transition-colors"
+                  data-koan-id={koan.id}
+                >
+                  Run
+                </button>
               </div>
             </div>
-          </div>
-          
-          <div class="flex gap-2 mb-3">
-            <input 
-              type="text" 
-              class="koan-input flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-yellow-500"
-              placeholder="Your answer..."
-              data-koan-id={koan.id}
-            />
-            <button 
-              class="koan-check-btn px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-md font-medium transition-colors"
-              data-koan-id={koan.id}
-            >
-              Check
-            </button>
-          </div>
-          
-          <div class="koan-result hidden" data-koan-id={koan.id}>
-            <div class="success-message hidden p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-md">
-              <span class="text-green-800 dark:text-green-200">✅ Correct!</span>
-            </div>
-            
-            <div class="error-message hidden p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md">
-              <span class="text-red-800 dark:text-red-200">❌ Try again!</span>
-              <div class="expected-output mt-2 text-sm text-red-700 dark:text-red-300"></div>
-            </div>
-          </div>
+          </form>
           
           {koan.hint && (
             <details class="mt-3">
@@ -92,61 +109,77 @@ const { koans } = Astro.props;
 </div>
 
 <script>
-  // Simple koan checker without the full interpreter for now
   function initializeKoans() {
-    const buttons = document.querySelectorAll('.koan-check-btn');
+    const forms = document.querySelectorAll('.koan-form');
     
-    buttons.forEach(button => {
-      button.addEventListener('click', checkKoan);
+    forms.forEach(form => {
+      form.addEventListener('submit', handleKoanSubmit);
     });
 
-    const inputs = document.querySelectorAll('.koan-input');
-    inputs.forEach(input => {
-      input.addEventListener('keypress', (e) => {
-        if ((e as KeyboardEvent).key === 'Enter') {
-          checkKoan(e);
-        }
+    // Handle input positioning and sizing - delay to ensure DOM is ready
+    setTimeout(() => {
+      const inputs = document.querySelectorAll('.koan-input');
+      inputs.forEach(input => {
+        positionInput(input as HTMLInputElement);
       });
-    });
+    }, 100);
   }
 
-  function checkKoan(e: Event) {
-    const target = e.target as HTMLElement;
-    if (!target) return;
-    
-    const koanId = target.dataset.koanId;
+  function positionInput(input: HTMLInputElement) {
+    const koanId = input.dataset.koanId;
     if (!koanId) return;
 
-    const input = document.querySelector(`input[data-koan-id="${koanId}"]`) as HTMLInputElement;
-    const result = document.querySelector(`.koan-result[data-koan-id="${koanId}"]`) as HTMLElement;
+    const blank = document.querySelector(`.koan-item[data-koan-id="${koanId}"] .koan-blank`);
+    if (blank) {
+      // Position the input over the blank
+      const blankRect = blank.getBoundingClientRect();
+      const container = blank.closest('.relative');
+      if (container) {
+        const containerRect = container.getBoundingClientRect();
+        input.style.left = `${blankRect.left - containerRect.left}px`;
+        input.style.top = `${blankRect.top - containerRect.top}px`;
+        input.style.width = `${Math.max(blankRect.width, 80)}px`;
+        input.style.height = `${blankRect.height}px`;
+      }
+    }
+  }
+
+  function handleKoanSubmit(e: Event) {
+    e.preventDefault();
+    
+    const form = e.target as HTMLFormElement;
+    const koanId = form.dataset.koanId;
+    if (!koanId) return;
+
+    const input = form.querySelector('.koan-input') as HTMLInputElement;
+    const result = form.querySelector(`.koan-result[data-koan-id="${koanId}"]`) as HTMLElement;
     
     if (!input || !result) return;
 
     const successMsg = result.querySelector('.success-message') as HTMLElement;
     const errorMsg = result.querySelector('.error-message') as HTMLElement;
-    const expectedOutput = result.querySelector('.expected-output') as HTMLElement;
+    const resultOutput = result.querySelector('.result-output') as HTMLElement;
+    const errorOutput = result.querySelector('.error-output') as HTMLElement;
     
-    if (!successMsg || !errorMsg || !expectedOutput) return;
+    if (!successMsg || !errorMsg || !resultOutput || !errorOutput) return;
 
     const userAnswer = input.value.trim();
-    const codeElement = document.querySelector(`.koan-item[data-koan-id="${koanId}"] .koan-code`) as HTMLElement;
-    const expectedAnswer = codeElement?.dataset?.answer;
+    const codeContainer = form.querySelector('.koan-code-container') as HTMLElement;
+    const expectedAnswer = codeContainer?.dataset?.answer;
 
     // Reset previous results
-    result.classList.remove('hidden');
     successMsg.classList.add('hidden');
     errorMsg.classList.add('hidden');
 
     // Simple comparison for now - we can enhance this later with the interpreter
     if (userAnswer === expectedAnswer) {
       successMsg.classList.remove('hidden');
-      input.classList.add('border-green-500');
-      input.classList.remove('border-red-500');
+      resultOutput.textContent = expectedAnswer; // Show the result
+      input.style.borderColor = '#10b981'; // green
     } else {
       errorMsg.classList.remove('hidden');
-      expectedOutput.textContent = `Expected: ${expectedAnswer}`;
-      input.classList.add('border-red-500');
-      input.classList.remove('border-green-500');
+      errorOutput.textContent = `Expected: ${expectedAnswer}`;
+      input.style.borderColor = '#ef4444'; // red
     }
   }
 
@@ -155,19 +188,68 @@ const { koans } = Astro.props;
 
   // Re-initialize on page transitions
   document.addEventListener('astro:page-load', initializeKoans);
+
+  // Handle window resize
+  window.addEventListener('resize', () => {
+    const inputs = document.querySelectorAll('.koan-input');
+    inputs.forEach(input => {
+      positionInput(input as HTMLInputElement);
+    });
+  });
 </script>
 
 <style>
-  .koan-code {
+  .koan-code-container {
+    position: relative;
+    line-height: 1.5;
+  }
+  
+  .koan-blank {
+    background: rgba(59, 130, 246, 0.2);
+    border: 1px dashed rgba(59, 130, 246, 0.5);
+    border-radius: 3px;
+    padding: 2px 4px;
+    display: inline-block;
+    min-width: 60px;
+    text-align: center;
     position: relative;
   }
   
-  .koan-input:focus {
+  .koan-input {
+    position: absolute;
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: 3px;
+    padding: 2px 4px;
+    color: white;
+    font-family: 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'Liberation Mono', 'Courier New', monospace;
+    font-size: 14px;
+    line-height: 1.5;
     outline: none;
-    box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.2);
+    transition: all 0.2s ease;
+    z-index: 10;
   }
   
-  .koan-check-btn:active {
+  .koan-input:focus {
+    border-color: rgba(59, 130, 246, 0.8);
+    background: rgba(59, 130, 246, 0.2);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+  }
+  
+  .koan-run-btn:active {
     transform: translateY(1px);
+  }
+
+  .koan-result {
+    min-height: 20px;
+  }
+
+  .koan-form {
+    margin-bottom: 0;
+  }
+
+  /* Terminal-like styling */
+  .koan-code-container {
+    font-family: 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'Liberation Mono', 'Courier New', monospace;
   }
 </style>

@@ -264,6 +264,7 @@ import ErlangKoans from '../../components/ErlangKoans.astro';
   {
     id: "arithmetic1",
     question: "What is 5 + 3?",
+    code: "____",
     answer: "5 + 3.",
     hint: "Use the + operator and don't forget the dot at the end",
     explanation: "Erlang uses standard arithmetic operators. Every expression must end with a dot."
@@ -271,27 +272,31 @@ import ErlangKoans from '../../components/ErlangKoans.astro';
   {
     id: "arithmetic2", 
     question: "What is 10 - 4?",
+    code: "____",
     answer: "10 - 4.",
     hint: "Use the - operator",
     explanation: "Subtraction works just like in other languages"
   },
   {
     id: "variables1",
-    question: "Assign the number 42 to variable X, then retrieve X",
+    question: "Assign the number 42 to variable X",
+    code: "____",
     answer: "X = 42.",
     hint: "Variables start with capital letters and use = for assignment",
     explanation: "Variables in Erlang are immutable - once assigned, they cannot be changed within the same scope."
   },
   {
     id: "variables2",
-    question: "If A = 5 and B = 3, what is A + B?",
-    answer: "A + B.",
-    hint: "Variables can be used in expressions",
-    explanation: "Variables hold values that can be used in calculations"
+    question: "If you have X = 5, what expression retrieves the value of X?",
+    code: "X = 5.\n____",
+    answer: "X.",
+    hint: "Just type the variable name",
+    explanation: "Variables hold values that can be retrieved by typing the variable name"
   },
   {
     id: "atoms1",
     question: "Create an atom named 'hello'",
+    code: "____",
     answer: "hello.",
     hint: "Atoms are lowercase constants that represent themselves",
     explanation: "Atoms are constants like 'ok', 'error', 'hello' - they are their own value"
@@ -299,6 +304,7 @@ import ErlangKoans from '../../components/ErlangKoans.astro';
   {
     id: "lists1",
     question: "Create a list with numbers 1, 2, 3",
+    code: "____",
     answer: "[1, 2, 3].",
     hint: "Lists use square brackets with comma-separated elements",
     explanation: "Lists are ordered collections of elements enclosed in square brackets"
@@ -306,6 +312,7 @@ import ErlangKoans from '../../components/ErlangKoans.astro';
   {
     id: "tuples1",
     question: "Create a tuple with the atom 'ok' and the number 42",
+    code: "____",
     answer: "{ok, 42}.",
     hint: "Tuples use curly braces with comma-separated elements",
     explanation: "Tuples are fixed-size containers often used for returning multiple values"
@@ -313,6 +320,7 @@ import ErlangKoans from '../../components/ErlangKoans.astro';
   {
     id: "functions1",
     question: "Call the built-in abs function with the argument -5",
+    code: "____",
     answer: "abs(-5).",
     hint: "Function calls use parentheses: function_name(arguments)",
     explanation: "The abs function returns the absolute value of a number"
