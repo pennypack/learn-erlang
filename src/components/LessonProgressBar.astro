@@ -1,0 +1,29 @@
+---
+// Component for showing lesson scroll progress
+---
+
+<div id="lesson-progress-bar" class="fixed top-0 left-0 w-full h-1 bg-gray-200 dark:bg-gray-800 z-50">
+  <div id="progress-fill" class="h-full bg-blue-500 transition-all duration-150 ease-out" style="width: 0%"></div>
+</div>
+
+<script>
+  function updateProgressBar() {
+    const progressBar = document.getElementById('progress-fill');
+    if (!progressBar) return;
+    
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = (scrollTop / scrollHeight) * 100;
+    
+    progressBar.style.width = Math.min(100, Math.max(0, progress)) + '%';
+  }
+  
+  // Update progress on scroll
+  window.addEventListener('scroll', updateProgressBar);
+  
+  // Update progress on page load
+  document.addEventListener('DOMContentLoaded', updateProgressBar);
+  
+  // Update progress on resize
+  window.addEventListener('resize', updateProgressBar);
+</script>

@@ -10,7 +10,7 @@ estimatedReadingTime: 10
 
 # Learn Erlang Step-By-Step
 
-## Post 0: System Setup and Your First Project
+## Lesson 0: System Setup and Your First Project
 
 Welcome to **Learn Erlang Step-By-Step**! This tutorial series will take you from complete beginner to building a real-time WebSocket chat server using pure Erlang. No frameworks, no shortcuts - just the fundamentals that will make you understand how systems like Phoenix LiveView actually work under the hood.
 
@@ -282,7 +282,7 @@ Follows Erlang conventions:
 
 ## What's Next?
 
-In **Post 1**, we'll write your first Erlang module and understand:
+In **Lesson 1**, we'll write your first Erlang module and understand:
 
 - Basic syntax and data types
 - Pattern matching (Erlang's superpower)
@@ -341,8 +341,8 @@ Notice the **pattern matching** and **guards** - this is what makes Erlang speci
 
 ---
 
-Ready to write some Erlang? Let's move on to **Post 1: Your First Erlang Module**!
+Ready to write some Erlang? Let's move on to **Lesson 1: Your First Erlang Module**!
 
 ---
 
-_This is part of the "Learn Erlang Step-By-Step" tutorial series. Each post builds on the previous ones, so make sure you complete the exercises before moving forward._
+_This is part of the "Learn Erlang Step-By-Step" tutorial series. Each lesson builds on the previous ones, so make sure you complete the exercises before moving forward._

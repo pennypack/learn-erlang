@@ -1,10 +1,10 @@
 ---
 export interface Props {
-  posts: any[];
+  lessons: any[];
 }
 
-const { posts } = Astro.props;
-const totalPosts = posts.length;
+const { lessons } = Astro.props;
+const totalLessons = lessons.length;
 ---
 
 <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
@@ -44,7 +44,7 @@ const totalPosts = posts.length;
   </div>
   
   <div class="text-center text-sm text-gray-600 dark:text-gray-400">
-    <span id="completed-count">0</span> of {totalPosts} posts completed
+    <span id="completed-count">0</span> of {totalLessons} lessons completed
   </div>
   
   <button
@@ -55,11 +55,11 @@ const totalPosts = posts.length;
   </button>
 </div>
 
-<script is:inline define:vars={{ totalPosts }}>
+<script is:inline define:vars={{ totalLessons }}>
   function updateProgress() {
-    const completedPosts = JSON.parse(localStorage.getItem('completedPosts') || '[]');
-    const completedCount = completedPosts.length;
-    const percentage = Math.round((completedCount / totalPosts) * 100);
+    const completedLessons = JSON.parse(localStorage.getItem('completedLessons') || '[]');
+    const completedCount = completedLessons.length;
+    const percentage = Math.round((completedCount / totalLessons) * 100);
     
     const circle = document.getElementById('progress-circle');
     const percentageText = document.getElementById('progress-percentage');
@@ -86,7 +86,7 @@ const totalPosts = posts.length;
   // Reset button
   document.getElementById('reset-progress')?.addEventListener('click', () => {
     if (confirm('Are you sure you want to reset your progress?')) {
-      localStorage.removeItem('completedPosts');
+      localStorage.removeItem('completedLessons');
       updateProgress();
       location.reload();
     }

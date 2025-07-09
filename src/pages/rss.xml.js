@@ -2,18 +2,18 @@ import rss from '@astrojs/rss';
 import { getCollection } from 'astro:content';
 
 export async function GET(context) {
-  const posts = await getCollection('posts');
-  const sortedPosts = posts.sort((a, b) => a.data.postNumber - b.data.postNumber);
+  const lessons = await getCollection('lessons');
+  const sortedLessons = lessons.sort((a, b) => a.data.postNumber - b.data.postNumber);
   
   return rss({
     title: 'Learn Erlang Step-By-Step',
     description: 'Build a real-time WebSocket chat server from scratch using pure Erlang',
     site: context.site,
-    items: sortedPosts.map((post) => ({
-      title: `Post ${post.data.postNumber}: ${post.data.title}`,
-      pubDate: post.data.publishDate,
-      description: post.data.description,
-      link: `/posts/${post.slug}/`,
+    items: sortedLessons.map((lesson) => ({
+      title: `Lesson ${lesson.data.postNumber}: ${lesson.data.title}`,
+      pubDate: lesson.data.publishDate,
+      description: lesson.data.description,
+      link: `/lessons/${lesson.slug}/`,
     })),
     customData: `<language>en-us</language>`,
   });

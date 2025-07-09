@@ -2,8 +2,8 @@
 import { getCollection } from 'astro:content';
 import ProgressTracker from './ProgressTracker.astro';
 
-const posts = await getCollection('posts');
-const sortedPosts = posts.sort((a, b) => a.data.postNumber - b.data.postNumber);
+const lessons = await getCollection('lessons');
+const sortedLessons = lessons.sort((a, b) => a.data.postNumber - b.data.postNumber);
 
 const currentPath = Astro.url.pathname;
 ---
@@ -14,21 +14,21 @@ const currentPath = Astro.url.pathname;
 >
   <div class="p-4">
     <div class="mb-6">
-      <ProgressTracker posts={sortedPosts} />
+      <ProgressTracker lessons={sortedLessons} />
     </div>
     
     <nav class="space-y-1">
       <h2 class="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-3">
-        Tutorial Posts
+        Tutorial Lessons
       </h2>
       
-      {sortedPosts.map((post) => {
-        const isActive = currentPath === `/posts/${post.slug}`;
+      {sortedLessons.map((lesson) => {
+        const isActive = currentPath === `/lessons/${lesson.slug}`;
         const isCompleted = false; // Will be updated with localStorage
         
         return (
           <a
-            href={`/posts/${post.slug}`}
+            href={`/lessons/${lesson.slug}`}
             class={`
               group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors
               ${isActive 
@@ -36,7 +36,7 @@ const currentPath = Astro.url.pathname;
                 : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
               }
             `}
-            data-post-number={post.data.postNumber}
+            data-lesson-number={lesson.data.postNumber}
           >
             <span class={`
               flex-shrink-0 w-6 h-6 rounded-full border-2 mr-3 flex items-center justify-center text-xs
@@ -50,20 +50,11 @@ const currentPath = Astro.url.pathname;
                   <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                 </svg>
               ) : (
-                post.data.postNumber
+                lesson.data.postNumber
               )}
             </span>
             
-            <span class="truncate">{post.data.title}</span>
-            
-            <span class={`
-              ml-auto text-xs px-2 py-0.5 rounded
-              ${post.data.difficulty === 'beginner' && 'bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300'}
-              ${post.data.difficulty === 'intermediate' && 'bg-yellow-100 dark:bg-yellow-900/50 text-yellow-700 dark:text-yellow-300'}
-              ${post.data.difficulty === 'advanced' && 'bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300'}
-            `}>
-              {post.data.difficulty}
-            </span>
+            <span class="truncate">{lesson.data.title}</span>
           </a>
         );
       })}
@@ -91,11 +82,11 @@ const currentPath = Astro.url.pathname;
 <script>
   // Update completion status based on localStorage
   function updateSidebarStatus() {
-    const completedPosts = JSON.parse(localStorage.getItem('completedPosts') || '[]');
+    const completedLessons = JSON.parse(localStorage.getItem('completedLessons') || '[]');
     
-    document.querySelectorAll('[data-post-number]').forEach((link) => {
-      const postNumber = parseInt(link.getAttribute('data-post-number') || '0');
-      if (completedPosts.includes(postNumber)) {
+    document.querySelectorAll('[data-lesson-number]').forEach((link) => {
+      const lessonNumber = parseInt(link.getAttribute('data-lesson-number') || '0');
+      if (completedLessons.includes(lessonNumber)) {
         const numberSpan = link.querySelector('span:first-child');
         if (numberSpan && !link.classList.contains('bg-blue-100')) {
           numberSpan.classList.add('bg-green-500', 'text-white', 'border-green-500');

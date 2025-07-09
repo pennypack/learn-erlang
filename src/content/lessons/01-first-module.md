@@ -365,7 +365,7 @@ get_user_messages(History, User) when is_list(History) ->
 
 ## What's Next?
 
-In **Post 2**, we'll dive deeper into pattern matching and explore:
+In **Lesson 2**, we'll dive deeper into pattern matching and explore:
 
 - Advanced list and tuple patterns
 - Case expressions and if statements

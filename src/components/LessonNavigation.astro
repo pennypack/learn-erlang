@@ -11,7 +11,7 @@ const { prev, next } = Astro.props;
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
     {prev && (
       <a
-        href={`/posts/${prev.slug}`}
+        href={`/lessons/${prev.slug}`}
         class="group flex items-center space-x-3 p-4 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-colors"
         data-prev-link
       >
@@ -20,20 +20,20 @@ const { prev, next } = Astro.props;
         </svg>
         <div class="text-left">
           <p class="text-sm text-gray-500 dark:text-gray-400">Previous</p>
-          <p class="font-medium text-gray-900 dark:text-gray-100">Post {prev.data.postNumber}: {prev.data.title}</p>
+          <p class="font-medium text-gray-900 dark:text-gray-100">Lesson {prev.data.postNumber}: {prev.data.title}</p>
         </div>
       </a>
     )}
     
     {next && (
       <a
-        href={`/posts/${next.slug}`}
+        href={`/lessons/${next.slug}`}
         class="group flex items-center justify-end space-x-3 p-4 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-colors md:col-start-2"
         data-next-link
       >
         <div class="text-right">
           <p class="text-sm text-gray-500 dark:text-gray-400">Next</p>
-          <p class="font-medium text-gray-900 dark:text-gray-100">Post {next.data.postNumber}: {next.data.title}</p>
+          <p class="font-medium text-gray-900 dark:text-gray-100">Lesson {next.data.postNumber}: {next.data.title}</p>
         </div>
         <svg class="w-5 h-5 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>

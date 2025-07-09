@@ -1,7 +1,8 @@
 ---
 import Layout from './Layout.astro';
 import TableOfContents from '../components/TableOfContents.astro';
-import PostNavigation from '../components/PostNavigation.astro';
+import LessonNavigation from '../components/LessonNavigation.astro';
+import LessonProgressBar from '../components/LessonProgressBar.astro';
 import ReadingTime from '../components/ReadingTime.astro';
 import { getCollection } from 'astro:content';
 
@@ -16,38 +17,30 @@ export interface Props {
   prerequisites?: number[];
 }
 
-const { title, description, postNumber, publishDate, tags, difficulty, estimatedReadingTime, prerequisites } = Astro.props;
+const { title, description, postNumber, publishDate, tags, estimatedReadingTime, prerequisites } = Astro.props;
 
-// Get all posts for navigation
-const allPosts = await getCollection('posts');
-const sortedPosts = allPosts.sort((a, b) => a.data.postNumber - b.data.postNumber);
+// Get all lessons for navigation
+const allLessons = await getCollection('lessons');
+const sortedLessons = allLessons.sort((a, b) => a.data.postNumber - b.data.postNumber);
 
-const currentIndex = sortedPosts.findIndex(p => p.data.postNumber === postNumber);
-const prevPost = currentIndex > 0 ? sortedPosts[currentIndex - 1] : null;
-const nextPost = currentIndex < sortedPosts.length - 1 ? sortedPosts[currentIndex + 1] : null;
+const currentIndex = sortedLessons.findIndex(l => l.data.postNumber === postNumber);
+const prevLesson = currentIndex > 0 ? sortedLessons[currentIndex - 1] : null;
+const nextLesson = currentIndex < sortedLessons.length - 1 ? sortedLessons[currentIndex + 1] : null;
 
-const gitHubEditUrl = `https://github.com/yourusername/learn-erlang/edit/main/src/content/posts/${sortedPosts[currentIndex].id}`;
+const gitHubEditUrl = `https://github.com/yourusername/learn-erlang/edit/main/src/content/lessons/${sortedLessons[currentIndex].id}`;
 ---
 
 <Layout title={title} description={description}>
+  <LessonProgressBar />
   <article class="prose prose-lg dark:prose-invert max-w-none">
-    <!-- Post Header -->
+    <!-- Lesson Header -->
     <header class="not-prose mb-8 pb-8 border-b border-gray-200 dark:border-gray-800">
       <div class="flex items-center gap-3 mb-4">
-        <span class={`
-          inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
-          ${difficulty === 'beginner' && 'bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300'}
-          ${difficulty === 'intermediate' && 'bg-yellow-100 dark:bg-yellow-900/50 text-yellow-700 dark:text-yellow-300'}
-          ${difficulty === 'advanced' && 'bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300'}
-        `}>
-          {difficulty}
-        </span>
-        
         <ReadingTime content={Astro.slots.default} estimatedTime={estimatedReadingTime} />
       </div>
       
       <h1 class="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-        Post {postNumber}: {title}
+        Lesson {postNumber}: {title}
       </h1>
       
       <p class="text-xl text-gray-600 dark:text-gray-400 mb-4">
@@ -84,14 +77,14 @@ const gitHubEditUrl = `https://github.com/yourusername/learn-erlang/edit/main/sr
         <div class="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
           <h3 class="text-sm font-medium text-blue-900 dark:text-blue-100 mb-2">Prerequisites</h3>
           <p class="text-sm text-blue-700 dark:text-blue-300">
-            Complete these posts first:
+            Complete these lessons first:
             {prerequisites.map((num, i) => {
-              const prereqPost = sortedPosts.find(p => p.data.postNumber === num);
+              const prereqLesson = sortedLessons.find(l => l.data.postNumber === num);
               return (
                 <span>
                   {i > 0 && ', '}
-                  <a href={`/posts/${prereqPost?.slug}`} class="underline">
-                    Post {num}: {prereqPost?.data.title}
+                  <a href={`/lessons/${prereqLesson?.slug}`} class="underline">
+                    Lesson {num}: {prereqLesson?.data.title}
                   </a>
                 </span>
               );
@@ -104,8 +97,8 @@ const gitHubEditUrl = `https://github.com/yourusername/learn-erlang/edit/main/sr
     <!-- Table of Contents -->
     <TableOfContents />
     
-    <!-- Post Content -->
-    <div id="post-content" class="mt-8">
+    <!-- Lesson Content -->
+    <div id="lesson-content" class="mt-8">
       <slot />
     </div>
     
@@ -114,7 +107,7 @@ const gitHubEditUrl = `https://github.com/yourusername/learn-erlang/edit/main/sr
       <div class="flex items-center justify-between">
         <div>
           <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-            Finished this post?
+            Finished this lesson?
           </h3>
           <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
             Mark it as complete to track your progress
@@ -123,7 +116,7 @@ const gitHubEditUrl = `https://github.com/yourusername/learn-erlang/edit/main/sr
         
         <button
           id="mark-complete"
-          data-post-number={postNumber}
+          data-lesson-number={postNumber}
           class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md font-medium transition-colors"
         >
           Mark as Complete
@@ -132,19 +125,19 @@ const gitHubEditUrl = `https://github.com/yourusername/learn-erlang/edit/main/sr
     </div>
     
     <!-- Navigation -->
-    <PostNavigation prev={prevPost} next={nextPost} />
+    <LessonNavigation prev={prevLesson} next={nextLesson} />
   </article>
 </Layout>
 
 <script>
-  // Handle marking posts as complete
+  // Handle marking lessons as complete
   document.addEventListener('astro:page-load', () => {
     const button = document.getElementById('mark-complete');
-    const postNumber = parseInt(button?.getAttribute('data-post-number') || '0');
+    const lessonNumber = parseInt(button?.getAttribute('data-lesson-number') || '0');
     
     // Check if already completed
-    const completedPosts = JSON.parse(localStorage.getItem('completedPosts') || '[]');
-    if (completedPosts.includes(postNumber)) {
+    const completedLessons = JSON.parse(localStorage.getItem('completedLessons') || '[]');
+    if (completedLessons.includes(lessonNumber)) {
       if (button) {
         button.textContent = 'Completed ✓';
         button.classList.remove('bg-green-600', 'hover:bg-green-700');
@@ -154,10 +147,10 @@ const gitHubEditUrl = `https://github.com/yourusername/learn-erlang/edit/main/sr
     }
     
     button?.addEventListener('click', () => {
-      const completed = JSON.parse(localStorage.getItem('completedPosts') || '[]');
-      if (!completed.includes(postNumber)) {
-        completed.push(postNumber);
-        localStorage.setItem('completedPosts', JSON.stringify(completed));
+      const completed = JSON.parse(localStorage.getItem('completedLessons') || '[]');
+      if (!completed.includes(lessonNumber)) {
+        completed.push(lessonNumber);
+        localStorage.setItem('completedLessons', JSON.stringify(completed));
         
         button.textContent = 'Completed ✓';
         button.classList.remove('bg-green-600', 'hover:bg-green-700');
