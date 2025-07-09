@@ -1,0 +1,14 @@
+{
+  "name": "js-erlang-interpreter",
+  "version": "0.1.0",
+  "description": "A minimal JavaScript Erlang interpreter for educational koans",
+  "main": "src/interpreter.js",
+  "type": "module",
+  "scripts": {
+    "test": "node tests/run-tests.js",
+    "test:watch": "node tests/run-tests.js --watch"
+  },
+  "keywords": ["erlang", "interpreter", "educational", "koans"],
+  "author": "Learn Erlang Tutorial",
+  "license": "MIT"
+}

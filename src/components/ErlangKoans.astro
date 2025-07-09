@@ -1,0 +1,173 @@
+---
+export interface Props {
+  koans: Array<{
+    id: string;
+    question: string;
+    answer: string;
+    hint?: string;
+    explanation?: string;
+  }>;
+}
+
+const { koans } = Astro.props;
+---
+
+<div class="koans-section mt-8 p-6 bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
+  <div class="flex items-center gap-2 mb-4">
+    <span class="text-2xl">🧘</span>
+    <h3 class="text-xl font-bold text-yellow-900 dark:text-yellow-100">Koans - Test Your Understanding</h3>
+  </div>
+  
+  <p class="text-sm text-yellow-800 dark:text-yellow-200 mb-6">
+    Fill in the blanks to test your knowledge. These run real Erlang code!
+  </p>
+  
+  <div class="space-y-6">
+    {koans.map((koan) => (
+      <div class="koan-item" data-koan-id={koan.id}>
+        <div class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-yellow-300 dark:border-yellow-700">
+          <div class="mb-3">
+            <h4 class="font-medium text-gray-900 dark:text-gray-100 mb-2">
+              {koan.question}
+            </h4>
+            
+            <div class="bg-gray-50 dark:bg-gray-900 rounded p-3 font-mono text-sm">
+              <div class="koan-code" data-answer={koan.answer}>
+                <code>{koan.answer}</code>
+              </div>
+            </div>
+          </div>
+          
+          <div class="flex gap-2 mb-3">
+            <input 
+              type="text" 
+              class="koan-input flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-yellow-500"
+              placeholder="Your answer..."
+              data-koan-id={koan.id}
+            />
+            <button 
+              class="koan-check-btn px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-md font-medium transition-colors"
+              data-koan-id={koan.id}
+            >
+              Check
+            </button>
+          </div>
+          
+          <div class="koan-result hidden" data-koan-id={koan.id}>
+            <div class="success-message hidden p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-md">
+              <span class="text-green-800 dark:text-green-200">✅ Correct!</span>
+            </div>
+            
+            <div class="error-message hidden p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md">
+              <span class="text-red-800 dark:text-red-200">❌ Try again!</span>
+              <div class="expected-output mt-2 text-sm text-red-700 dark:text-red-300"></div>
+            </div>
+          </div>
+          
+          {koan.hint && (
+            <details class="mt-3">
+              <summary class="cursor-pointer text-sm font-medium text-yellow-700 dark:text-yellow-300 hover:text-yellow-900 dark:hover:text-yellow-100">
+                💡 Hint
+              </summary>
+              <div class="mt-2 text-sm text-gray-600 dark:text-gray-400 pl-4">
+                {koan.hint}
+              </div>
+            </details>
+          )}
+          
+          {koan.explanation && (
+            <details class="mt-3">
+              <summary class="cursor-pointer text-sm font-medium text-blue-700 dark:text-blue-300 hover:text-blue-900 dark:hover:text-blue-100">
+                📚 Explanation
+              </summary>
+              <div class="mt-2 text-sm text-gray-600 dark:text-gray-400 pl-4">
+                {koan.explanation}
+              </div>
+            </details>
+          )}
+        </div>
+      </div>
+    ))}
+  </div>
+</div>
+
+<script>
+  // Simple koan checker without the full interpreter for now
+  function initializeKoans() {
+    const buttons = document.querySelectorAll('.koan-check-btn');
+    
+    buttons.forEach(button => {
+      button.addEventListener('click', checkKoan);
+    });
+
+    const inputs = document.querySelectorAll('.koan-input');
+    inputs.forEach(input => {
+      input.addEventListener('keypress', (e) => {
+        if ((e as KeyboardEvent).key === 'Enter') {
+          checkKoan(e);
+        }
+      });
+    });
+  }
+
+  function checkKoan(e: Event) {
+    const target = e.target as HTMLElement;
+    if (!target) return;
+    
+    const koanId = target.dataset.koanId;
+    if (!koanId) return;
+
+    const input = document.querySelector(`input[data-koan-id="${koanId}"]`) as HTMLInputElement;
+    const result = document.querySelector(`.koan-result[data-koan-id="${koanId}"]`) as HTMLElement;
+    
+    if (!input || !result) return;
+
+    const successMsg = result.querySelector('.success-message') as HTMLElement;
+    const errorMsg = result.querySelector('.error-message') as HTMLElement;
+    const expectedOutput = result.querySelector('.expected-output') as HTMLElement;
+    
+    if (!successMsg || !errorMsg || !expectedOutput) return;
+
+    const userAnswer = input.value.trim();
+    const codeElement = document.querySelector(`.koan-item[data-koan-id="${koanId}"] .koan-code`) as HTMLElement;
+    const expectedAnswer = codeElement?.dataset?.answer;
+
+    // Reset previous results
+    result.classList.remove('hidden');
+    successMsg.classList.add('hidden');
+    errorMsg.classList.add('hidden');
+
+    // Simple comparison for now - we can enhance this later with the interpreter
+    if (userAnswer === expectedAnswer) {
+      successMsg.classList.remove('hidden');
+      input.classList.add('border-green-500');
+      input.classList.remove('border-red-500');
+    } else {
+      errorMsg.classList.remove('hidden');
+      expectedOutput.textContent = `Expected: ${expectedAnswer}`;
+      input.classList.add('border-red-500');
+      input.classList.remove('border-green-500');
+    }
+  }
+
+  // Initialize when DOM is ready
+  document.addEventListener('DOMContentLoaded', initializeKoans);
+
+  // Re-initialize on page transitions
+  document.addEventListener('astro:page-load', initializeKoans);
+</script>
+
+<style>
+  .koan-code {
+    position: relative;
+  }
+  
+  .koan-input:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.2);
+  }
+  
+  .koan-check-btn:active {
+    transform: translateY(1px);
+  }
+</style>
