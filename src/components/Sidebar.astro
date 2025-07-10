@@ -141,13 +141,12 @@ const currentPath = Astro.url.pathname;
     }
     
     .sidebar.collapsed {
-      width: 4rem !important;
-      min-width: 4rem !important;
+      width: 3rem !important;
+      min-width: 3rem !important;
     }
     
     .sidebar.collapsed .sidebar-content {
-      opacity: 0;
-      pointer-events: none;
+      display: none;
     }
   }
   
@@ -184,9 +183,9 @@ const currentPath = Astro.url.pathname;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    z-index: 60;
+    z-index: 100;
     transition: all 0.2s;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   }
   
   :global(.dark) .collapse-button {
@@ -299,6 +298,7 @@ const currentPath = Astro.url.pathname;
       if (sidebarState.isCollapsed) {
         sidebar.classList.add('collapsed');
       } else {
+        sidebar.classList.remove('collapsed');
         sidebar.style.width = sidebarState.width;
       }
     }
