@@ -227,6 +227,7 @@ const currentPath = Astro.url.pathname;
   @media (max-width: 1023px) {
     .sidebar-content {
       padding-top: 5rem; /* Extra space for mobile header */
+      padding-bottom: 2rem; /* Extra space for mobile footer */
     }
   }
   
@@ -266,6 +267,8 @@ const currentPath = Astro.url.pathname;
     width: localStorage.getItem('sidebarWidth') || '16rem'
   };
   
+  let sidebarInitialized = false;
+  
   function updateCompletionStatus() {
     const completedLessons = JSON.parse(localStorage.getItem('completedLessons') || '[]');
     
@@ -282,6 +285,8 @@ const currentPath = Astro.url.pathname;
   }
   
   function initSidebar() {
+    if (sidebarInitialized) return;
+    
     const sidebar = document.getElementById('sidebar');
     const collapseBtn = document.getElementById('collapse-btn');
     const resizeHandle = document.getElementById('resize-handle');
@@ -300,18 +305,26 @@ const currentPath = Astro.url.pathname;
     
     // Desktop collapse toggle
     if (collapseBtn) {
-      collapseBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        sidebarState.isCollapsed = !sidebarState.isCollapsed;
-        localStorage.setItem('sidebarCollapsed', sidebarState.isCollapsed.toString());
-        
-        if (sidebarState.isCollapsed) {
-          sidebar.classList.add('collapsed');
-        } else {
-          sidebar.classList.remove('collapsed');
-          sidebar.style.width = sidebarState.width;
-        }
-      });
+      // Remove any existing listeners by cloning the button
+      collapseBtn.replaceWith(collapseBtn.cloneNode(true));
+      const newCollapseBtn = document.getElementById('collapse-btn');
+      
+      if (newCollapseBtn) {
+        newCollapseBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          
+          sidebarState.isCollapsed = !sidebarState.isCollapsed;
+          localStorage.setItem('sidebarCollapsed', sidebarState.isCollapsed.toString());
+          
+          if (sidebarState.isCollapsed) {
+            sidebar.classList.add('collapsed');
+          } else {
+            sidebar.classList.remove('collapsed');
+            sidebar.style.width = sidebarState.width;
+          }
+        });
+      }
     }
     
     // Resize functionality
@@ -355,6 +368,8 @@ const currentPath = Astro.url.pathname;
         document.addEventListener('mouseup', handleMouseUp);
       });
     }
+    
+    sidebarInitialized = true;
   }
   
   // Initialize
@@ -364,6 +379,7 @@ const currentPath = Astro.url.pathname;
   });
   
   document.addEventListener('astro:page-load', () => {
+    sidebarInitialized = false; // Reset for new page
     updateCompletionStatus();
     initSidebar();
   });
