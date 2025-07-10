@@ -2,6 +2,8 @@
 import Layout from "../layouts/Layout.astro";
 import { getCollection } from "astro:content";
 
+export const prerender = true;
+
 const lessons = await getCollection("lessons");
 const sortedLessons = lessons.sort(
   (a, b) => a.data.postNumber - b.data.postNumber
