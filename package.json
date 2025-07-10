@@ -17,7 +17,6 @@
     "@astrojs/tailwind": "^6.0.0",
     "astro": "^5.0.0",
     "astro-expressive-code": "^0.41.3",
-    "rehype-slug": "^6.0.0",
     "resend": "^4.6.0",
     "sharp": "^0.33.0",
     "typescript": "^5.0.0"
