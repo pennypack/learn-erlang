@@ -1,5 +1,5 @@
 [phases.setup]
-nixPkgs = ["nodejs_18"]
+nixPkgs = ["nodejs_22"]
 
 [phases.install]
 cmds = ["npm ci"]
@@ -8,7 +8,8 @@ cmds = ["npm ci"]
 cmds = ["npm run build"]
 
 [start]
-cmd = "npm run preview"
+cmd = "npm run start"
 
 [variables]
 NODE_ENV = "production"
+HOST = "0.0.0.0"
