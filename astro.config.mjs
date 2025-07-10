@@ -1,34 +1,33 @@
-import { defineConfig } from 'astro/config';
-import tailwind from '@astrojs/tailwind';
-import mdx from '@astrojs/mdx';
-import sitemap from '@astrojs/sitemap';
-import expressiveCode from 'astro-expressive-code';
-import rehypeSlug from 'rehype-slug';
+import { defineConfig } from "astro/config";
+import tailwind from "@astrojs/tailwind";
+import mdx from "@astrojs/mdx";
+import sitemap from "@astrojs/sitemap";
+import expressiveCode from "astro-expressive-code";
+import rehypeSlug from "rehype-slug";
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://learnerlang.com',
-  output: 'static',
+  site: "https://learnerlang.com",
+  output: "static",
   integrations: [
     expressiveCode({
-      themes: ['dracula', 'github-light'],
+      themes: ["dracula", "github-light"],
+      themeCssSelector: (theme) => `[data-theme="${theme.type}"]`,
       styleOverrides: {
-        borderRadius: '0.5rem',
+        borderRadius: "0.5rem",
         frames: {
-          shadowColor: 'transparent',
+          shadowColor: "transparent",
         },
       },
-      customizeTheme: (theme) => {
-        theme.name = theme.type === 'dark' ? 'dark' : 'light';
-        return theme;
-      },
     }),
-    mdx({
-      rehypePlugins: [
-        // This will automatically generate IDs for headings
-        rehypeSlug,
-      ],
-    }),
+    mdx(),
+    //   {
+    //   rehypePlugins: [
+    //     // This will automatically generate IDs for headings
+    //     rehypeSlug,
+    //   ],
+    // }
+
     tailwind(),
     sitemap(),
   ],
