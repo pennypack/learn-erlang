@@ -3,7 +3,6 @@ import tailwind from "@astrojs/tailwind";
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import expressiveCode from "astro-expressive-code";
-import rehypeSlug from "rehype-slug";
 
 // https://astro.build/config
 export default defineConfig({
@@ -21,12 +20,6 @@ export default defineConfig({
       },
     }),
     mdx(),
-    //   {
-    //   rehypePlugins: [
-    //     // This will automatically generate IDs for headings
-    //     rehypeSlug,
-    //   ],
-    // }
 
     tailwind(),
     sitemap(),
