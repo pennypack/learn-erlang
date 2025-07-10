@@ -664,7 +664,7 @@ ok`}</code></pre>
           <!-- Lesson List -->
           <div class="space-y-3">
             {
-              sortedLessons.slice(0, 5).map((lesson, index) => (
+              sortedLessons.slice(0, 5).map((lesson) => (
                 <a
                   href={`/lessons/${lesson.slug}`}
                   class="group block bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 transition-all duration-300 hover:shadow-lg hover:border-blue-300 dark:hover:border-blue-700 hover:-translate-y-1"
@@ -736,7 +736,7 @@ ok`}</code></pre>
           <!-- Hidden lessons container -->
           <div id="hidden-lessons" class="hidden space-y-3 mt-3">
             {
-              sortedLessons.slice(5).map((lesson, index) => (
+              sortedLessons.slice(5).map((lesson) => (
                 <a
                   href={`/lessons/${lesson.slug}`}
                   class="group block bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 transition-all duration-300 hover:shadow-lg hover:border-blue-300 dark:hover:border-blue-700 hover:-translate-y-1"

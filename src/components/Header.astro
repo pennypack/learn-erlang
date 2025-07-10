@@ -68,20 +68,22 @@ import ThemeToggle from './ThemeToggle.astro';
     if (!toggleBtn || !sidebar || !overlay) return;
     
     function openSidebar() {
-      sidebar.classList.add('open');
-      overlay.classList.remove('hidden');
+      sidebar?.classList.add('open');
+      overlay?.classList.remove('hidden');
       document.body.style.overflow = 'hidden';
     }
     
     function closeSidebar() {
-      sidebar.classList.remove('open');
-      overlay.classList.add('hidden');
+      sidebar?.classList.remove('open');
+      overlay?.classList.add('hidden');
       document.body.style.overflow = '';
     }
     
     // Remove any existing listeners
     toggleBtn.replaceWith(toggleBtn.cloneNode(true));
     const newToggleBtn = document.getElementById('sidebar-toggle');
+    
+    if (!newToggleBtn) return;
     
     // Toggle button
     newToggleBtn.addEventListener('click', (e) => {

@@ -135,7 +135,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
       // Sidebar collapse functionality
       let collapseInitialized = false;
       
-      function updateButtonPosition(sidebar, collapseBtn, hoverZone, isCollapsed, currentWidth) {
+      function updateButtonPosition(sidebar: HTMLElement, collapseBtn: HTMLElement, hoverZone: HTMLElement, isCollapsed: boolean, currentWidth?: number) {
         if (isCollapsed) {
           collapseBtn.style.left = '0.5rem';
           hoverZone.style.left = '-1rem';
@@ -168,22 +168,22 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
           if (isCollapsed) {
             sidebar.classList.add('collapsed');
             arrow.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>';
-            updateButtonPosition(sidebar, collapseBtn, hoverZone, true);
+            updateButtonPosition(sidebar, collapseBtn, hoverZone, true, undefined);
           } else {
             sidebar.classList.remove('collapsed');
             sidebar.style.width = savedWidth;
             arrow.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>';
-            updateButtonPosition(sidebar, collapseBtn, hoverZone, false);
+            updateButtonPosition(sidebar, collapseBtn, hoverZone, false, undefined);
           }
         }
         
         // Hover functionality
         function showButton() {
-          collapseBtn.style.opacity = '1';
+          collapseBtn!.style.opacity = '1';
         }
         
         function hideButton() {
-          collapseBtn.style.opacity = '0';
+          collapseBtn!.style.opacity = '0';
         }
         
         hoverZone.addEventListener('mouseenter', showButton);
@@ -202,12 +202,12 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
           if (isCollapsed) {
             sidebar.classList.add('collapsed');
             arrow.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>';
-            updateButtonPosition(sidebar, collapseBtn, hoverZone, true);
+            updateButtonPosition(sidebar, collapseBtn, hoverZone, true, undefined);
           } else {
             sidebar.classList.remove('collapsed');
             sidebar.style.width = savedWidth;
             arrow.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>';
-            updateButtonPosition(sidebar, collapseBtn, hoverZone, false);
+            updateButtonPosition(sidebar, collapseBtn, hoverZone, false, undefined);
           }
         });
         
@@ -225,7 +225,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
             const startX = e.clientX;
             const startWidth = sidebar.offsetWidth;
             
-            function handleMouseMove(e) {
+            function handleMouseMove(e: MouseEvent) {
               if (!isResizing) return;
               
               const newWidth = startWidth + (e.clientX - startX);
@@ -233,9 +233,9 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
               const maxWidth = 448; // 28rem
               
               if (newWidth >= minWidth && newWidth <= maxWidth) {
-                sidebar.style.width = newWidth + 'px';
+                sidebar!.style.width = newWidth + 'px';
                 savedWidth = newWidth + 'px';
-                updateButtonPosition(sidebar, collapseBtn, hoverZone, false, newWidth);
+                updateButtonPosition(sidebar!, collapseBtn!, hoverZone!, false, newWidth);
               }
             }
             
