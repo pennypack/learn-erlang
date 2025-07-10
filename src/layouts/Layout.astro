@@ -80,7 +80,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
       <!-- Desktop Sidebar Collapse Button -->
       <button
         id="sidebar-collapse-btn"
-        class="hidden lg:flex fixed w-8 h-8 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-full items-center justify-center hover:bg-gray-50 dark:hover:bg-gray-700 transition-all z-50 shadow-lg transform -translate-x-1/2"
+        class="hidden lg:flex fixed w-8 h-8 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-full items-center justify-center hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-300 z-50 shadow-lg transform -translate-x-1/2 opacity-0"
         title="Toggle sidebar"
         style="top: 5rem; left: 16rem;"
       >
@@ -88,6 +88,13 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
         </svg>
       </button>
+      
+      <!-- Hover zone for collapse button -->
+      <div
+        id="sidebar-hover-zone"
+        class="hidden lg:block fixed z-40"
+        style="top: 4rem; width: 3rem; bottom: 0; left: 14rem;"
+      ></div>
       
       <main class="flex-1 w-full max-w-none lg:max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <slot />
@@ -126,12 +133,16 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
       // Sidebar collapse functionality
       let collapseInitialized = false;
       
-      function updateButtonPosition(sidebar, collapseBtn, isCollapsed, currentWidth) {
+      function updateButtonPosition(sidebar, collapseBtn, hoverZone, isCollapsed, currentWidth) {
         if (isCollapsed) {
           collapseBtn.style.left = '0.5rem';
+          hoverZone.style.left = '-1rem';
+          hoverZone.style.width = '2rem';
         } else {
           const width = currentWidth || sidebar.offsetWidth;
           collapseBtn.style.left = width + 'px';
+          hoverZone.style.left = (width + 4) + 'px'; // Start 4px past the sidebar edge
+          hoverZone.style.width = '2rem';
         }
       }
       
@@ -142,8 +153,9 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
         const collapseBtn = document.getElementById('sidebar-collapse-btn');
         const arrow = document.getElementById('sidebar-collapse-arrow');
         const resizeHandle = document.getElementById('resize-handle');
+        const hoverZone = document.getElementById('sidebar-hover-zone');
         
-        if (!sidebar || !collapseBtn || !arrow) return;
+        if (!sidebar || !collapseBtn || !arrow || !hoverZone) return;
         
         // Get saved state
         let isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
@@ -154,14 +166,28 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
           if (isCollapsed) {
             sidebar.classList.add('collapsed');
             arrow.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>';
-            updateButtonPosition(sidebar, collapseBtn, true);
+            updateButtonPosition(sidebar, collapseBtn, hoverZone, true);
           } else {
             sidebar.classList.remove('collapsed');
             sidebar.style.width = savedWidth;
             arrow.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>';
-            updateButtonPosition(sidebar, collapseBtn, false);
+            updateButtonPosition(sidebar, collapseBtn, hoverZone, false);
           }
         }
+        
+        // Hover functionality
+        function showButton() {
+          collapseBtn.style.opacity = '1';
+        }
+        
+        function hideButton() {
+          collapseBtn.style.opacity = '0';
+        }
+        
+        hoverZone.addEventListener('mouseenter', showButton);
+        hoverZone.addEventListener('mouseleave', hideButton);
+        collapseBtn.addEventListener('mouseenter', showButton);
+        collapseBtn.addEventListener('mouseleave', hideButton);
         
         // Add click handler
         collapseBtn.addEventListener('click', (e) => {
@@ -174,12 +200,12 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
           if (isCollapsed) {
             sidebar.classList.add('collapsed');
             arrow.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>';
-            updateButtonPosition(sidebar, collapseBtn, true);
+            updateButtonPosition(sidebar, collapseBtn, hoverZone, true);
           } else {
             sidebar.classList.remove('collapsed');
             sidebar.style.width = savedWidth;
             arrow.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>';
-            updateButtonPosition(sidebar, collapseBtn, false);
+            updateButtonPosition(sidebar, collapseBtn, hoverZone, false);
           }
         });
         
@@ -207,7 +233,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
               if (newWidth >= minWidth && newWidth <= maxWidth) {
                 sidebar.style.width = newWidth + 'px';
                 savedWidth = newWidth + 'px';
-                updateButtonPosition(sidebar, collapseBtn, false, newWidth);
+                updateButtonPosition(sidebar, collapseBtn, hoverZone, false, newWidth);
               }
             }
             
