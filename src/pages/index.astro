@@ -1,73 +1,166 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import { getCollection } from 'astro:content';
+import Layout from "../layouts/Layout.astro";
+import { getCollection } from "astro:content";
 
-const lessons = await getCollection('lessons');
-const sortedLessons = lessons.sort((a, b) => a.data.postNumber - b.data.postNumber);
+const lessons = await getCollection("lessons");
+const sortedLessons = lessons.sort(
+  (a, b) => a.data.postNumber - b.data.postNumber
+);
 ---
 
 <Layout title="Learn Erlang | Build Fault-Tolerant Systems">
   <style>
     @keyframes gradient {
-      0%, 100% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
+      0%,
+      100% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
     }
-    
+
     @keyframes float {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-20px); }
+      0%,
+      100% {
+        transform: translateY(0px);
+      }
+      50% {
+        transform: translateY(-20px);
+      }
     }
-    
+
     @keyframes pulse {
-      0%, 100% { opacity: 0.1; }
-      50% { opacity: 0.3; }
+      0%,
+      100% {
+        opacity: 0.1;
+      }
+      50% {
+        opacity: 0.3;
+      }
     }
-    
+
     .gradient-animate {
       background-size: 200% 200%;
       animation: gradient 8s ease infinite;
     }
-    
+
     .float-animation {
       animation: float 6s ease-in-out infinite;
     }
-    
+
     .mesh-gradient {
-      background-image: 
-        radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba(168, 85, 247, 0.15) 0%, transparent 50%),
-        radial-gradient(circle at 40% 40%, rgba(34, 197, 94, 0.1) 0%, transparent 50%);
+      background-image:
+        radial-gradient(
+          circle at 20% 80%,
+          rgba(59, 130, 246, 0.08) 0%,
+          transparent 50%
+        ),
+        radial-gradient(
+          circle at 80% 20%,
+          rgba(168, 85, 247, 0.08) 0%,
+          transparent 50%
+        ),
+        radial-gradient(
+          circle at 40% 40%,
+          rgba(34, 197, 94, 0.05) 0%,
+          transparent 50%
+        );
     }
-    
+
+    :global(.dark) .mesh-gradient {
+      background-image:
+        radial-gradient(
+          circle at 20% 80%,
+          rgba(59, 130, 246, 0.15) 0%,
+          transparent 50%
+        ),
+        radial-gradient(
+          circle at 80% 20%,
+          rgba(168, 85, 247, 0.15) 0%,
+          transparent 50%
+        ),
+        radial-gradient(
+          circle at 40% 40%,
+          rgba(34, 197, 94, 0.1) 0%,
+          transparent 50%
+        );
+    }
+
     .hero-pattern {
-      background-image: 
-        linear-gradient(30deg, transparent 40%, rgba(59, 130, 246, 0.03) 40%, rgba(59, 130, 246, 0.03) 60%, transparent 60%),
-        linear-gradient(60deg, transparent 40%, rgba(168, 85, 247, 0.03) 40%, rgba(168, 85, 247, 0.03) 60%, transparent 60%);
-      background-size: 50px 50px, 50px 50px;
-      background-position: 0 0, 25px 25px;
+      background-image:
+        linear-gradient(
+          30deg,
+          transparent 40%,
+          rgba(59, 130, 246, 0.015) 40%,
+          rgba(59, 130, 246, 0.015) 60%,
+          transparent 60%
+        ),
+        linear-gradient(
+          60deg,
+          transparent 40%,
+          rgba(168, 85, 247, 0.015) 40%,
+          rgba(168, 85, 247, 0.015) 60%,
+          transparent 60%
+        );
+      background-size:
+        50px 50px,
+        50px 50px;
+      background-position:
+        0 0,
+        25px 25px;
     }
-    
+
+    :global(.dark) .hero-pattern {
+      background-image:
+        linear-gradient(
+          30deg,
+          transparent 40%,
+          rgba(59, 130, 246, 0.03) 40%,
+          rgba(59, 130, 246, 0.03) 60%,
+          transparent 60%
+        ),
+        linear-gradient(
+          60deg,
+          transparent 40%,
+          rgba(168, 85, 247, 0.03) 40%,
+          rgba(168, 85, 247, 0.03) 60%,
+          transparent 60%
+        );
+      background-size:
+        50px 50px,
+        50px 50px;
+      background-position:
+        0 0,
+        25px 25px;
+    }
+
     .card-hover {
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    
+
     .card-hover:hover {
       transform: translateY(-4px);
     }
-    
+
     .text-gradient {
-      background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #22c55e 100%);
+      background: linear-gradient(
+        135deg,
+        #3b82f6 0%,
+        #8b5cf6 50%,
+        #22c55e 100%
+      );
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
-    
+
     .beacon {
       position: relative;
     }
-    
+
     .beacon::before {
-      content: '';
+      content: "";
       position: absolute;
       top: 50%;
       left: 50%;
@@ -79,36 +172,52 @@ const sortedLessons = lessons.sort((a, b) => a.data.postNumber - b.data.postNumb
       animation: pulse 2s ease-in-out infinite;
     }
   </style>
-  
+
   <div class="relative overflow-hidden">
     <!-- Premium Background Pattern -->
     <div class="absolute inset-0 mesh-gradient"></div>
     <div class="absolute inset-0 hero-pattern opacity-50"></div>
-    
+
     <!-- Floating Shapes -->
-    <div class="absolute top-20 left-10 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl float-animation"></div>
-    <div class="absolute bottom-20 right-10 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl float-animation" style="animation-delay: 2s;"></div>
-    
+    <div
+      class="absolute top-20 left-10 w-72 h-72 bg-blue-500/5 dark:bg-blue-500/10 rounded-full blur-3xl float-animation"
+    >
+    </div>
+    <div
+      class="absolute bottom-20 right-10 w-96 h-96 bg-purple-500/5 dark:bg-purple-500/10 rounded-full blur-3xl float-animation"
+      style="animation-delay: 2s;"
+    >
+    </div>
+
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <!-- Hero Section -->
       <section class="pt-20 pb-32">
         <div class="text-center mb-16">
           <!-- Premium Badge -->
-          <div class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20 rounded-full mb-8">
+          <div
+            class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20 rounded-full mb-8"
+          >
             <span class="beacon w-2 h-2 bg-green-500 rounded-full"></span>
-            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Currently in Development</span>
+            <span class="text-sm font-medium text-gray-700 dark:text-gray-300"
+              >Currently in Development</span
+            >
           </div>
-          
-          <h1 class="text-5xl sm:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
-            <span class="text-gray-900 dark:text-white">Master the Art of</span><br/>
-            <span class="text-gradient">Fault-Tolerant Systems</span>
+
+          <h1
+            class="text-5xl sm:text-6xl lg:text-7xl font-bold mb-6 leading-tight"
+          >
+            <span class="text-gray-900 dark:text-white">Learn Erlang</span><br
+            />
+            <span class="text-gradient">Step-By-Step</span>
           </h1>
-          
-          <p class="text-xl sm:text-2xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto mb-12 leading-relaxed">
-            Learn Erlang by building a production-ready WebSocket chat server. 
+
+          <p
+            class="text-xl sm:text-2xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto mb-12 leading-relaxed"
+          >
+            Learn Erlang by building a production-ready WebSocket chat server.
             From first principles to distributed systems.
           </p>
-          
+
           <!-- CTA Buttons -->
           <div class="flex flex-col sm:flex-row gap-4 justify-center mb-16">
             <a
@@ -117,30 +226,60 @@ const sortedLessons = lessons.sort((a, b) => a.data.postNumber - b.data.postNumb
             >
               <span class="relative z-10 flex items-center">
                 Start Learning
-                <svg class="w-5 h-5 ml-2 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                <svg
+                  class="w-5 h-5 ml-2 transition-transform group-hover:translate-x-1"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
                 </svg>
               </span>
-              <div class="absolute inset-0 bg-gradient-to-r from-blue-700 to-purple-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div
+                class="absolute inset-0 bg-gradient-to-r from-blue-700 to-purple-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+              >
+              </div>
             </a>
-            
+
             <a
               href="#curriculum"
               class="inline-flex items-center justify-center px-8 py-4 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm text-gray-900 dark:text-gray-100 font-semibold rounded-xl border border-gray-200 dark:border-gray-700 transition-all duration-300 hover:scale-105 hover:bg-white dark:hover:bg-gray-800 hover:shadow-xl"
             >
               View Curriculum
-              <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              <svg
+                class="w-5 h-5 ml-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M19 9l-7 7-7-7"></path>
               </svg>
             </a>
           </div>
-          
+
           <!-- Newsletter Section -->
           <div class="max-w-2xl mx-auto">
-            <div class="relative bg-gradient-to-r from-blue-50/50 to-purple-50/50 dark:from-blue-900/20 dark:to-purple-900/20 backdrop-blur-sm rounded-2xl p-8 border border-blue-200/50 dark:border-blue-800/50">
-              <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Get notified when new lessons drop</h3>
-              <p class="text-sm text-gray-600 dark:text-gray-400 mb-6">We're actively developing this course. Join the waitlist for updates.</p>
-              
+            <div
+              class="relative bg-gradient-to-r from-blue-50/50 to-purple-50/50 dark:from-blue-900/20 dark:to-purple-900/20 backdrop-blur-sm rounded-2xl p-8 border border-blue-200/50 dark:border-blue-800/50"
+            >
+              <h3
+                class="text-lg font-semibold text-gray-900 dark:text-white mb-2"
+              >
+                Get notified when new lessons drop
+              </h3>
+              <p class="text-sm text-gray-600 dark:text-gray-400 mb-6">
+                We're actively developing this course. Join the waitlist for
+                updates.
+              </p>
+
               <form id="newsletter-form" class="flex gap-3">
                 <input
                   type="email"
@@ -161,104 +300,240 @@ const sortedLessons = lessons.sort((a, b) => a.data.postNumber - b.data.postNumb
             </div>
           </div>
         </div>
-        
+
         <!-- Feature Grid -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-          <div class="group relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-8 rounded-2xl border border-gray-200 dark:border-gray-700 card-hover hover:shadow-2xl hover:border-blue-300 dark:hover:border-blue-700">
-            <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <div
+            class="group relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-8 rounded-2xl border border-gray-200 dark:border-gray-700 card-hover hover:shadow-2xl hover:border-blue-300 dark:hover:border-blue-700"
+          >
+            <div
+              class="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"
+            >
+            </div>
             <div class="relative">
-              <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+              <div
+                class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"
+              >
+                <svg
+                  class="w-6 h-6 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
                 </svg>
               </div>
-              <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Hands-on Project</h3>
-              <p class="text-gray-600 dark:text-gray-400">Build a real-time chat server handling thousands of concurrent connections</p>
+              <h3
+                class="text-lg font-semibold text-gray-900 dark:text-white mb-2"
+              >
+                Hands-on Project
+              </h3>
+              <p class="text-gray-600 dark:text-gray-400">
+                Build a real-time chat server handling thousands of concurrent
+                connections
+              </p>
             </div>
           </div>
-          
-          <div class="group relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-8 rounded-2xl border border-gray-200 dark:border-gray-700 card-hover hover:shadow-2xl hover:border-green-300 dark:hover:border-green-700">
-            <div class="absolute inset-0 bg-gradient-to-br from-green-500/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+
+          <div
+            class="group relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-8 rounded-2xl border border-gray-200 dark:border-gray-700 card-hover hover:shadow-2xl hover:border-green-300 dark:hover:border-green-700"
+          >
+            <div
+              class="absolute inset-0 bg-gradient-to-br from-green-500/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"
+            >
+            </div>
             <div class="relative">
-              <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+              <div
+                class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"
+              >
+                <svg
+                  class="w-6 h-6 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+                  ></path>
                 </svg>
               </div>
-              <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Interactive Koans</h3>
-              <p class="text-gray-600 dark:text-gray-400">Master concepts through fill-in-the-blank exercises with instant feedback</p>
+              <h3
+                class="text-lg font-semibold text-gray-900 dark:text-white mb-2"
+              >
+                Interactive Koans
+              </h3>
+              <p class="text-gray-600 dark:text-gray-400">
+                Master concepts through fill-in-the-blank exercises with instant
+                feedback
+              </p>
             </div>
           </div>
-          
-          <div class="group relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-8 rounded-2xl border border-gray-200 dark:border-gray-700 card-hover hover:shadow-2xl hover:border-purple-300 dark:hover:border-purple-700">
-            <div class="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+
+          <div
+            class="group relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-8 rounded-2xl border border-gray-200 dark:border-gray-700 card-hover hover:shadow-2xl hover:border-purple-300 dark:hover:border-purple-700"
+          >
+            <div
+              class="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"
+            >
+            </div>
             <div class="relative">
-              <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+              <div
+                class="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"
+              >
+                <svg
+                  class="w-6 h-6 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"
+                  ></path>
                 </svg>
               </div>
-              <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Battle-tested Patterns</h3>
-              <p class="text-gray-600 dark:text-gray-400">Learn OTP behaviors powering WhatsApp, Discord, and telecom systems</p>
+              <h3
+                class="text-lg font-semibold text-gray-900 dark:text-white mb-2"
+              >
+                Battle-tested Patterns
+              </h3>
+              <p class="text-gray-600 dark:text-gray-400">
+                Learn OTP behaviors powering WhatsApp, Discord, and telecom
+                systems
+              </p>
             </div>
           </div>
         </div>
       </section>
-      
+
       <!-- Why Erlang Section -->
       <section class="py-20 border-t border-gray-200 dark:border-gray-800">
         <div class="max-w-6xl mx-auto">
           <div class="text-center mb-16">
-            <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+            <h2
+              class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4"
+            >
               Why Erlang Powers the World's Most Reliable Systems
             </h2>
-            <p class="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
-              From WhatsApp handling billions of messages to Ericsson's 99.9999999% uptime telecom switches, 
-              Erlang's unique approach to concurrency and fault tolerance is unmatched.
+            <p
+              class="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto"
+            >
+              From WhatsApp handling billions of messages to Ericsson's
+              99.9999999% uptime telecom switches, Erlang's unique approach to
+              concurrency and fault tolerance is unmatched.
             </p>
           </div>
-          
+
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div class="space-y-8">
               <div class="flex gap-4">
-                <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-blue-500/10 to-blue-600/10 rounded-xl flex items-center justify-center">
-                  <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                <div
+                  class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-blue-500/10 to-blue-600/10 rounded-xl flex items-center justify-center"
+                >
+                  <svg
+                    class="w-6 h-6 text-blue-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                   </svg>
                 </div>
                 <div>
-                  <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">True Concurrency at Scale</h3>
-                  <p class="text-gray-600 dark:text-gray-400">Spawn millions of lightweight processes, each with their own memory and garbage collection. No shared state, no locks, no race conditions.</p>
+                  <h3
+                    class="text-xl font-semibold text-gray-900 dark:text-white mb-2"
+                  >
+                    True Concurrency at Scale
+                  </h3>
+                  <p class="text-gray-600 dark:text-gray-400">
+                    Spawn millions of lightweight processes, each with their own
+                    memory and garbage collection. No shared state, no locks, no
+                    race conditions.
+                  </p>
                 </div>
               </div>
-              
+
               <div class="flex gap-4">
-                <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-green-500/10 to-green-600/10 rounded-xl flex items-center justify-center">
-                  <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                <div
+                  class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-green-500/10 to-green-600/10 rounded-xl flex items-center justify-center"
+                >
+                  <svg
+                    class="w-6 h-6 text-green-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                    ></path>
                   </svg>
                 </div>
                 <div>
-                  <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">"Let It Crash" Philosophy</h3>
-                  <p class="text-gray-600 dark:text-gray-400">Instead of defensive programming, embrace failure. Supervisors restart crashed processes in milliseconds, maintaining system integrity.</p>
+                  <h3
+                    class="text-xl font-semibold text-gray-900 dark:text-white mb-2"
+                  >
+                    "Let It Crash" Philosophy
+                  </h3>
+                  <p class="text-gray-600 dark:text-gray-400">
+                    Instead of defensive programming, embrace failure.
+                    Supervisors restart crashed processes in milliseconds,
+                    maintaining system integrity.
+                  </p>
                 </div>
               </div>
-              
+
               <div class="flex gap-4">
-                <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-purple-500/10 to-purple-600/10 rounded-xl flex items-center justify-center">
-                  <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                <div
+                  class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-purple-500/10 to-purple-600/10 rounded-xl flex items-center justify-center"
+                >
+                  <svg
+                    class="w-6 h-6 text-purple-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                    ></path>
                   </svg>
                 </div>
                 <div>
-                  <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Hot Code Swapping</h3>
-                  <p class="text-gray-600 dark:text-gray-400">Update running systems without downtime. Deploy fixes while maintaining all connections and state.</p>
+                  <h3
+                    class="text-xl font-semibold text-gray-900 dark:text-white mb-2"
+                  >
+                    Hot Code Swapping
+                  </h3>
+                  <p class="text-gray-600 dark:text-gray-400">
+                    Update running systems without downtime. Deploy fixes while
+                    maintaining all connections and state.
+                  </p>
                 </div>
               </div>
             </div>
-            
+
             <div class="relative">
-              <div class="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-8 shadow-2xl">
+              <div
+                class="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-8 shadow-2xl"
+              >
                 <div class="font-mono text-sm">
                   <div class="flex items-center gap-2 mb-4">
                     <div class="w-3 h-3 bg-red-500 rounded-full"></div>
@@ -266,7 +541,8 @@ const sortedLessons = lessons.sort((a, b) => a.data.postNumber - b.data.postNumb
                     <div class="w-3 h-3 bg-green-500 rounded-full"></div>
                     <span class="text-gray-400 ml-2">erlang shell</span>
                   </div>
-                  <pre class="text-green-400"><code>{`1> Pid = spawn(fun() -> 
+                  <pre
+                    class="text-green-400"><code>{`1> Pid = spawn(fun() -> 
        receive
          {hello, From} -> 
            From ! {ok, "Hello, World!"}
@@ -282,87 +558,206 @@ Shell got {ok,"Hello, World!"}
 ok`}</code></pre>
                 </div>
               </div>
-              <div class="absolute -bottom-6 -right-6 w-32 h-32 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-full blur-2xl"></div>
+              <div
+                class="absolute -bottom-6 -right-6 w-32 h-32 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-full blur-2xl"
+              >
+              </div>
             </div>
           </div>
         </div>
       </section>
-      
+
       <!-- Curriculum Section -->
-      <section id="curriculum" class="py-20 border-t border-gray-200 dark:border-gray-800">
+      <section
+        id="curriculum"
+        class="py-20 border-t border-gray-200 dark:border-gray-800"
+      >
         <div class="max-w-6xl mx-auto">
           <div class="text-center mb-16">
-            <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+            <h2
+              class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4"
+            >
               A Structured Path to Mastery
             </h2>
-            <p class="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
-              35 lessons taking you from "Hello, World!" to building distributed systems. 
-              Each lesson builds on the last, with interactive exercises to cement your understanding.
+            <p
+              class="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto"
+            >
+              35 lessons taking you from "Hello, World!" to building distributed
+              systems. Each lesson builds on the last, with interactive
+              exercises to cement your understanding.
             </p>
           </div>
-          
+
           <!-- Phase Cards -->
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-            <div class="relative overflow-hidden bg-gradient-to-br from-blue-500 to-blue-600 p-8 rounded-2xl text-white">
+            <div
+              class="relative overflow-hidden bg-gradient-to-br from-blue-500 to-blue-600 p-8 rounded-2xl text-white"
+            >
               <div class="relative z-10">
                 <div class="text-5xl font-bold opacity-20 mb-2">01</div>
                 <h3 class="text-2xl font-bold mb-2">Foundation</h3>
                 <p class="text-blue-100 mb-4">Lessons 1-8</p>
-                <p class="text-sm text-blue-100">Master Erlang syntax, pattern matching, and process fundamentals</p>
+                <p class="text-sm text-blue-100">
+                  Master Erlang syntax, pattern matching, and process
+                  fundamentals
+                </p>
               </div>
-              <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-blue-400/20 rounded-full blur-2xl"></div>
+              <div
+                class="absolute -bottom-10 -right-10 w-40 h-40 bg-blue-400/20 rounded-full blur-2xl"
+              >
+              </div>
             </div>
-            
-            <div class="relative overflow-hidden bg-gradient-to-br from-green-500 to-green-600 p-8 rounded-2xl text-white">
+
+            <div
+              class="relative overflow-hidden bg-gradient-to-br from-green-500 to-green-600 p-8 rounded-2xl text-white"
+            >
               <div class="relative z-10">
                 <div class="text-5xl font-bold opacity-20 mb-2">02</div>
                 <h3 class="text-2xl font-bold mb-2">Building</h3>
                 <p class="text-green-100 mb-4">Lessons 9-20</p>
-                <p class="text-sm text-green-100">Implement OTP patterns, TCP/WebSocket protocols, and chat features</p>
+                <p class="text-sm text-green-100">
+                  Implement OTP patterns, TCP/WebSocket protocols, and chat
+                  features
+                </p>
               </div>
-              <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-green-400/20 rounded-full blur-2xl"></div>
+              <div
+                class="absolute -bottom-10 -right-10 w-40 h-40 bg-green-400/20 rounded-full blur-2xl"
+              >
+              </div>
             </div>
-            
-            <div class="relative overflow-hidden bg-gradient-to-br from-purple-500 to-purple-600 p-8 rounded-2xl text-white">
+
+            <div
+              class="relative overflow-hidden bg-gradient-to-br from-purple-500 to-purple-600 p-8 rounded-2xl text-white"
+            >
               <div class="relative z-10">
                 <div class="text-5xl font-bold opacity-20 mb-2">03</div>
                 <h3 class="text-2xl font-bold mb-2">Advanced</h3>
                 <p class="text-purple-100 mb-4">Lessons 21-35</p>
-                <p class="text-sm text-purple-100">Deploy distributed systems with monitoring, scaling, and operations</p>
+                <p class="text-sm text-purple-100">
+                  Deploy distributed systems with monitoring, scaling, and
+                  operations
+                </p>
               </div>
-              <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-purple-400/20 rounded-full blur-2xl"></div>
+              <div
+                class="absolute -bottom-10 -right-10 w-40 h-40 bg-purple-400/20 rounded-full blur-2xl"
+              >
+              </div>
             </div>
           </div>
-          
+
           <!-- Lesson List -->
           <div class="space-y-3">
-            {sortedLessons.map((lesson, index) => (
-              <a
-                href={`/lessons/${lesson.slug}`}
-                class="group block bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 transition-all duration-300 hover:shadow-lg hover:border-blue-300 dark:hover:border-blue-700 hover:-translate-y-1"
-              >
-                <div class="flex items-start gap-4">
-                  <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 rounded-xl flex items-center justify-center font-bold text-gray-600 dark:text-gray-300 group-hover:from-blue-100 group-hover:to-blue-200 dark:group-hover:from-blue-900/50 dark:group-hover:to-blue-800/50 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-all">
-                    {lesson.data.postNumber}
+            {
+              sortedLessons.slice(0, 5).map((lesson, index) => (
+                <a
+                  href={`/lessons/${lesson.slug}`}
+                  class="group block bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 transition-all duration-300 hover:shadow-lg hover:border-blue-300 dark:hover:border-blue-700 hover:-translate-y-1"
+                >
+                  <div class="flex items-start gap-4">
+                    <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 rounded-xl flex items-center justify-center font-bold text-gray-600 dark:text-gray-300 group-hover:from-blue-100 group-hover:to-blue-200 dark:group-hover:from-blue-900/50 dark:group-hover:to-blue-800/50 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-all">
+                      {lesson.data.postNumber}
+                    </div>
+                    <div class="flex-1">
+                      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                        {lesson.data.title}
+                      </h3>
+                      <p class="text-gray-600 dark:text-gray-400">
+                        {lesson.data.description}
+                      </p>
+                    </div>
+                    <svg
+                      class="w-5 h-5 text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-all transform group-hover:translate-x-2"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
                   </div>
-                  <div class="flex-1">
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                      {lesson.data.title}
-                    </h3>
-                    <p class="text-gray-600 dark:text-gray-400">
-                      {lesson.data.description}
-                    </p>
+                </a>
+              ))
+            }
+
+            {
+              sortedLessons.length > 5 && (
+                <div class="mt-8 text-center">
+                  <div class="flex items-center justify-center gap-2 text-gray-500 dark:text-gray-400 mb-4">
+                    <div class="h-px bg-gray-200 dark:bg-gray-700 flex-1" />
+                    <span class="text-sm px-4">
+                      Plus {sortedLessons.length - 5} more lessons
+                    </span>
+                    <div class="h-px bg-gray-200 dark:bg-gray-700 flex-1" />
                   </div>
-                  <svg class="w-5 h-5 text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-all transform group-hover:translate-x-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                  </svg>
+                  <button
+                    id="show-all-lessons"
+                    class="inline-flex items-center gap-2 px-6 py-3 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium rounded-xl transition-all duration-300"
+                  >
+                    Show all lessons
+                    <svg
+                      class="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </button>
                 </div>
-              </a>
-            ))}
+              )
+            }
+          </div>
+
+          <!-- Hidden lessons container -->
+          <div id="hidden-lessons" class="hidden space-y-3 mt-3">
+            {
+              sortedLessons.slice(5).map((lesson, index) => (
+                <a
+                  href={`/lessons/${lesson.slug}`}
+                  class="group block bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 transition-all duration-300 hover:shadow-lg hover:border-blue-300 dark:hover:border-blue-700 hover:-translate-y-1"
+                >
+                  <div class="flex items-start gap-4">
+                    <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 rounded-xl flex items-center justify-center font-bold text-gray-600 dark:text-gray-300 group-hover:from-blue-100 group-hover:to-blue-200 dark:group-hover:from-blue-900/50 dark:group-hover:to-blue-800/50 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-all">
+                      {lesson.data.postNumber}
+                    </div>
+                    <div class="flex-1">
+                      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                        {lesson.data.title}
+                      </h3>
+                      <p class="text-gray-600 dark:text-gray-400">
+                        {lesson.data.description}
+                      </p>
+                    </div>
+                    <svg
+                      class="w-5 h-5 text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-all transform group-hover:translate-x-2"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
+                  </div>
+                </a>
+              ))
+            }
           </div>
         </div>
       </section>
-      
+
       <!-- Footer CTA -->
       <section class="py-20 border-t border-gray-200 dark:border-gray-800">
         <div class="text-center">
@@ -370,71 +765,101 @@ ok`}</code></pre>
             Ready to Build Unbreakable Systems?
           </h2>
           <p class="text-lg text-gray-600 dark:text-gray-400 mb-8">
-            Start your journey into the world of fault-tolerant, distributed computing.
+            Start your journey into the world of fault-tolerant, distributed
+            computing.
           </p>
           <a
             href={`/lessons/${sortedLessons[0].slug}`}
             class="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/25"
           >
             Begin Learning Erlang
-            <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+            <svg
+              class="w-5 h-5 ml-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
             </svg>
           </a>
         </div>
       </section>
     </div>
   </div>
-  
+
   <script>
-    document.getElementById('newsletter-form')?.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      
-      const form = e.target as HTMLFormElement;
-      const emailInput = form.querySelector('#email') as HTMLInputElement;
-      const submitBtn = form.querySelector('#submit-btn') as HTMLButtonElement;
-      const message = document.getElementById('form-message');
-      
-      if (!emailInput || !submitBtn || !message) return;
-      
-      const email = emailInput.value.trim();
-      
-      if (!email) {
-        message.textContent = 'Please enter your email address';
-        message.className = 'text-sm mt-3 text-red-600 dark:text-red-400';
-        message.classList.remove('hidden');
-        return;
-      }
-      
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Subscribing...';
-      message.classList.add('hidden');
-      
-      try {
-        const response = await fetch('/api/newsletter', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email })
-        });
-        
-        const data = await response.json();
-        
-        if (response.ok) {
-          message.textContent = 'Thanks! We\'ll notify you when new lessons are published.';
-          message.className = 'text-sm mt-3 text-green-600 dark:text-green-400';
-          emailInput.value = '';
-        } else {
-          message.textContent = data.error || 'Something went wrong. Please try again.';
-          message.className = 'text-sm mt-3 text-red-600 dark:text-red-400';
+    document
+      .getElementById("newsletter-form")
+      ?.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const form = e.target as HTMLFormElement;
+        const emailInput = form.querySelector("#email") as HTMLInputElement;
+        const submitBtn = form.querySelector(
+          "#submit-btn"
+        ) as HTMLButtonElement;
+        const message = document.getElementById("form-message");
+
+        if (!emailInput || !submitBtn || !message) return;
+
+        const email = emailInput.value.trim();
+
+        if (!email) {
+          message.textContent = "Please enter your email address";
+          message.className = "text-sm mt-3 text-red-600 dark:text-red-400";
+          message.classList.remove("hidden");
+          return;
         }
-      } catch (error) {
-        message.textContent = 'Network error. Please try again.';
-        message.className = 'text-sm mt-3 text-red-600 dark:text-red-400';
-      }
-      
-      message.classList.remove('hidden');
-      submitBtn.disabled = false;
-      submitBtn.textContent = 'Subscribe';
-    });
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Subscribing...";
+        message.classList.add("hidden");
+
+        try {
+          const response = await fetch("/api/newsletter", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email }),
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            message.textContent =
+              "Thanks! We'll notify you when new lessons are published.";
+            message.className =
+              "text-sm mt-3 text-green-600 dark:text-green-400";
+            emailInput.value = "";
+          } else {
+            message.textContent =
+              data.error || "Something went wrong. Please try again.";
+            message.className = "text-sm mt-3 text-red-600 dark:text-red-400";
+          }
+        } catch (error) {
+          message.textContent = "Network error. Please try again.";
+          message.className = "text-sm mt-3 text-red-600 dark:text-red-400";
+        }
+
+        message.classList.remove("hidden");
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Subscribe";
+      });
+
+    // Show all lessons functionality
+    document
+      .getElementById("show-all-lessons")
+      ?.addEventListener("click", () => {
+        const hiddenLessons = document.getElementById("hidden-lessons");
+        const button = document.getElementById("show-all-lessons");
+
+        if (hiddenLessons && button) {
+          hiddenLessons.classList.remove("hidden");
+          button.style.display = "none";
+        }
+      });
   </script>
 </Layout>
