@@ -14,11 +14,6 @@ const currentPath = Astro.url.pathname;
 <aside id="sidebar" class="sidebar">
   <!-- Desktop Controls -->
   <div class="desktop-controls">
-    <button id="collapse-btn" class="collapse-button" title="Collapse sidebar">
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path>
-      </svg>
-    </button>
     <div id="resize-handle" class="resize-handle" title="Drag to resize"></div>
   </div>
   
@@ -141,8 +136,8 @@ const currentPath = Astro.url.pathname;
     }
     
     .sidebar.collapsed {
-      width: 3rem !important;
-      min-width: 3rem !important;
+      width: 0.5rem !important;
+      min-width: 0.5rem !important;
     }
     
     .sidebar.collapsed .sidebar-content {
@@ -168,39 +163,6 @@ const currentPath = Astro.url.pathname;
     .desktop-controls {
       display: block;
     }
-  }
-  
-  .collapse-button {
-    position: absolute;
-    top: 1rem;
-    right: -0.75rem;
-    width: 1.75rem;
-    height: 1.75rem;
-    background: white;
-    border: 1px solid rgb(209 213 219);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    z-index: 100;
-    transition: all 0.2s;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  }
-  
-  :global(.dark) .collapse-button {
-    background: rgb(31 41 55);
-    border-color: rgb(75 85 99);
-    color: rgb(156 163 175);
-  }
-  
-  .collapse-button:hover {
-    background: rgb(243 244 246);
-    transform: scale(1.05);
-  }
-  
-  :global(.dark) .collapse-button:hover {
-    background: rgb(55 65 81);
   }
   
   .resize-handle {
@@ -295,79 +257,25 @@ const currentPath = Astro.url.pathname;
     
     // Apply saved state on desktop
     if (window.innerWidth >= 1024) {
+      const arrow = document.getElementById('sidebar-collapse-arrow');
+      
       if (sidebarState.isCollapsed) {
         sidebar.classList.add('collapsed');
+        // Arrow points right when collapsed (->)
+        if (arrow) {
+          arrow.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>';
+        }
       } else {
         sidebar.classList.remove('collapsed');
         sidebar.style.width = sidebarState.width;
+        // Arrow points left when expanded (<-)
+        if (arrow) {
+          arrow.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>';
+        }
       }
     }
     
-    // Desktop collapse toggle
-    if (collapseBtn) {
-      // Remove any existing listeners by cloning the button
-      collapseBtn.replaceWith(collapseBtn.cloneNode(true));
-      const newCollapseBtn = document.getElementById('collapse-btn');
-      
-      if (newCollapseBtn) {
-        newCollapseBtn.addEventListener('click', (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          
-          sidebarState.isCollapsed = !sidebarState.isCollapsed;
-          localStorage.setItem('sidebarCollapsed', sidebarState.isCollapsed.toString());
-          
-          if (sidebarState.isCollapsed) {
-            sidebar.classList.add('collapsed');
-          } else {
-            sidebar.classList.remove('collapsed');
-            sidebar.style.width = sidebarState.width;
-          }
-        });
-      }
-    }
-    
-    // Resize functionality
-    if (resizeHandle) {
-      let isResizing = false;
-      
-      resizeHandle.addEventListener('mousedown', (e) => {
-        if (sidebarState.isCollapsed) return;
-        
-        isResizing = true;
-        document.body.style.cursor = 'col-resize';
-        document.body.style.userSelect = 'none';
-        
-        const startX = e.clientX;
-        const startWidth = sidebar.offsetWidth;
-        
-        function handleMouseMove(e) {
-          if (!isResizing) return;
-          
-          const newWidth = startWidth + (e.clientX - startX);
-          const minWidth = 192; // 12rem
-          const maxWidth = 448; // 28rem
-          
-          if (newWidth >= minWidth && newWidth <= maxWidth) {
-            sidebar.style.width = newWidth + 'px';
-            sidebarState.width = newWidth + 'px';
-          }
-        }
-        
-        function handleMouseUp() {
-          isResizing = false;
-          document.body.style.cursor = '';
-          document.body.style.userSelect = '';
-          localStorage.setItem('sidebarWidth', sidebarState.width);
-          
-          document.removeEventListener('mousemove', handleMouseMove);
-          document.removeEventListener('mouseup', handleMouseUp);
-        }
-        
-        document.addEventListener('mousemove', handleMouseMove);
-        document.addEventListener('mouseup', handleMouseUp);
-      });
-    }
+    // Desktop collapse toggle and resize functionality are now handled in Layout.astro
     
     sidebarInitialized = true;
   }
