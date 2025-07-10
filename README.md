@@ -20,7 +20,7 @@ An Astro-based tutorial website for learning Erlang by building a WebSocket chat
 ```
 src/
 ├── components/         # Reusable Astro components
-├── content/           
+├── content/
 │   ├── config.ts      # Content collection schema
 │   └── posts/         # Tutorial markdown files
 ├── layouts/           # Page layouts
@@ -79,7 +79,7 @@ Edit `astro.config.mjs`:
 
 ```js
 export default defineConfig({
-  site: 'https://your-domain.com',
+  site: "https://your-domain.com",
   // Other config...
 });
 ```
@@ -87,6 +87,7 @@ export default defineConfig({
 ### GitHub Integration
 
 Update GitHub URLs in:
+
 - `src/components/Header.astro`
 - `src/components/Sidebar.astro`
 - `src/layouts/PostLayout.astro`
@@ -111,6 +112,7 @@ npm run build
 ### Themes
 
 Edit theme colors in:
+
 - `tailwind.config.mjs`
 - `src/styles/global.css`
 
@@ -120,18 +122,7 @@ Configure in `astro.config.mjs`:
 
 ```js
 expressiveCode({
-  themes: ['dracula', 'github-light'],
+  themes: ["dracula", "github-light"],
   // Other options...
-})
+});
 ```
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Submit a pull request
-
-## License
-
-MIT
