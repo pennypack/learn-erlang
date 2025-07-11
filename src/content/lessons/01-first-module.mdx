@@ -3,7 +3,7 @@ title: "Your First Erlang Module"
 description: "Learn Erlang's basic syntax, modules, functions, and data types by building utility functions for our chat server"
 postNumber: 1
 publishDate: 2025-07-09T00:00:00Z
-tags: ["beginner","modules","functions"]
+tags: ["beginner", "modules", "functions"]
 difficulty: "beginner"
 ---
 
@@ -36,12 +36,12 @@ In Erlang, all code lives in modules. Let's create our first module with utiliti
 
 format_message(User, Message) ->
     Timestamp = current_timestamp(),
-    io_lib:format("[~s] ~s: ~s", [Timestamp, User, Message]).
+    "[" ++ Timestamp ++ "] " ++ User ++ ": " ++ Message.
 
 current_timestamp() ->
     {{Year, Month, Day}, {Hour, Min, Sec}} = calendar:local_time(),
-    io_lib:format("~4..0w-~2..0w-~2..0w ~2..0w:~2..0w:~2..0w",
-                  [Year, Month, Day, Hour, Min, Sec]).
+    list:flatten(io_lib:format("~4..0w-~2..0w-~2..0w ~2..0w:~2..0w:~2..0w",
+                  [Year, Month, Day, Hour, Min, Sec])).
 ```
 
 ### Breaking It Down
@@ -82,26 +82,26 @@ demonstrate() ->
     % Numbers
     Integer = 42,
     Float = 3.14,
-    
+
     % Atoms (constants that represent themselves)
     Status = ok,
     Action = join_room,
-    
+
     % Strings (actually lists of characters)
     Username = "Alice",
     Message = "Hello World!",
-    
+
     % Lists (can contain any types)
     Numbers = [1, 2, 3, 4, 5],
     Mixed = [1, hello, "world", 3.14],
-    
+
     % Tuples (fixed-size containers)
     Result = {ok, "Success"},
     User = {user, "Alice", online},
-    
+
     % Binary strings (efficient for large text)
     BinaryMsg = <<"Hello in binary">>,
-    
+
     % Print everything
     io:format("Integer: ~p~n", [Integer]),
     io:format("Status: ~p~n", [Status]),
@@ -112,6 +112,7 @@ demonstrate() ->
 ```
 
 **Key points:**
+
 - **Atoms** are constants like `ok`, `error`, `join_room`
 - **Strings** are lists of characters: `"Hello"` = `[72, 101, 108, 108, 111]`
 - **Tuples** group related data: `{ok, Value}` or `{error, Reason}`
@@ -153,6 +154,7 @@ grade_letter(_) ->
 ```
 
 **What's happening:**
+
 - Multiple function clauses with different conditions
 - **Guards** (`when`) test conditions
 - Functions return different values based on input
@@ -256,60 +258,62 @@ If any of these feel unclear, review the examples and try the exercises again. U
 
 ---
 
-import ErlangKoans from '../../components/ErlangKoans.astro';
+import ErlangKoans from "../../components/ErlangKoans.astro";
 
-<ErlangKoans koans={[
-  {
-    id: "arithmetic1",
-    question: "What is 5 + 3?",
-    code: "Result = 5 + 3,\nResult = ___.",
-    answer: "8"
-  },
-  {
-    id: "arithmetic2", 
-    question: "What is X - Y?",
-    code: "X = 10,\nY = 4,\nX - Y = ___.",
-    answer: "6"
-  },
-  {
-    id: "variables1",
-    question: "What value does MyVar hold?",
-    code: "MyVar = 42,\nMyVar = ___.",
-    answer: "42"
-  },
-  {
-    id: "variables2",
-    question: "Fill in the missing variable name:",
-    code: "A = 5,\nB = 3,\n___ = A + B,\nSum = 8.",
-    answer: "Sum"
-  },
-  {
-    id: "pattern1",
-    question: "After pattern matching, what value does A hold?",
-    code: "MyList = [1, 2, 3],\n[A, B, C] = MyList,\nA = ___.",
-    answer: "1"
-  },
-  {
-    id: "pattern2",
-    question: "What list makes Second = 20?",
-    code: "Numbers = ___,\n[First, Second, Third] = Numbers,\nSecond = 20.",
-    answer: "[10, 20, 30]",
-    validation: "pattern_check"
-  },
-  {
-    id: "tuples1",
-    question: "What value does Status hold?",
-    code: "Result = {ok, 42},\n{Status, Value} = Result,\nStatus = ___.",
-    answer: "ok"
-  },
-  {
-    id: "functions1",
-    question: "What function gives the absolute value?",
-    code: "Number = -5,\nResult = ___(Number),\nResult = 5.",
-    answer: "abs",
-    hint: "The abs function returns the absolute value of a number"
-  }
-]} />
+<ErlangKoans
+  koans={[
+    {
+      id: "arithmetic1",
+      question: "What is 5 + 3?",
+      code: "Result = 5 + 3,\nResult = ___.",
+      answer: "8",
+    },
+    {
+      id: "arithmetic2",
+      question: "What is X - Y?",
+      code: "X = 10,\nY = 4,\nX - Y = ___.",
+      answer: "6",
+    },
+    {
+      id: "variables1",
+      question: "What value does MyVar hold?",
+      code: "MyVar = 42,\nMyVar = ___.",
+      answer: "42",
+    },
+    {
+      id: "variables2",
+      question: "Fill in the missing variable name:",
+      code: "A = 5,\nB = 3,\n___ = A + B,\nSum = 8.",
+      answer: "Sum",
+    },
+    {
+      id: "pattern1",
+      question: "After pattern matching, what value does A hold?",
+      code: "MyList = [1, 2, 3],\n[A, B, C] = MyList,\nA = ___.",
+      answer: "1",
+    },
+    {
+      id: "pattern2",
+      question: "What list makes Second = 20?",
+      code: "Numbers = ___,\n[First, Second, Third] = Numbers,\nSecond = 20.",
+      answer: "[10, 20, 30]",
+      validation: "pattern_check",
+    },
+    {
+      id: "tuples1",
+      question: "What value does Status hold?",
+      code: "Result = {ok, 42},\n{Status, Value} = Result,\nStatus = ___.",
+      answer: "ok",
+    },
+    {
+      id: "functions1",
+      question: "What function gives the absolute value?",
+      code: "Number = -5,\nResult = ___(Number),\nResult = 5.",
+      answer: "abs",
+      hint: "The abs function returns the absolute value of a number",
+    },
+  ]}
+/>
 
 ---
 
