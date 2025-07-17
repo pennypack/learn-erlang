@@ -8,7 +8,12 @@
     "test": "node tests/run-tests.js",
     "test:watch": "node tests/run-tests.js --watch"
   },
-  "keywords": ["erlang", "interpreter", "educational", "koans"],
-  "author": "Learn Erlang Tutorial",
+  "keywords": [
+    "erlang",
+    "interpreter",
+    "educational",
+    "koans"
+  ],
+  "author": "Pennypack Software LLC",
   "license": "MIT"
 }
