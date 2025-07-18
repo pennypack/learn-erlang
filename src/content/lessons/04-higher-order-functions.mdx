@@ -1,0 +1,541 @@
+---
+title: "Higher-Order Functions"
+description: "Master higher-order operations like map, filter, and fold to build elegant data processing pipelines for our chat server"
+postNumber: 4
+publishDate: 2025-07-17T00:00:00Z
+tags: ["beginner","higher-order","functional"]
+difficulty: "beginner"
+---
+
+# Higher-Order Functions
+
+In this lesson, we'll explore higher-order functions. These are one of the most powerful features of functional programming. These functions work with other functions, allowing you to write more expressive and reusable code.
+
+Building on the recursion concepts from the previous lesson, we'll see how higher-order functions provide elegant solutions to common data processing tasks.
+
+## What Are Higher-Order Functions?
+
+Higher-order functions are functions that
+- Take other functions as arguments
+- Return functions as results
+- Or both
+
+This might sound complex, but you'll find they make code more expressive and eliminate repetitive patterns.
+
+Think of them as "function factories" or "function combinators". They let you build complex behaviors by combining simpler functions.
+
+## Functions as Values
+
+In Erlang, functions are first-class citizens. You can store them in variables, pass them as arguments, and return them from other functions.
+
+```erlang
+% Start the Erlang shell
+$ erl
+
+% Store a function in a variable
+1> Double = fun(X) -> X * 2 end.
+#Fun<erl_eval.6.99386804>
+
+2> Double(5).
+10
+
+% Functions can be passed as arguments
+3> ApplyFunction = fun(F, Value) -> F(Value) end.
+#Fun<erl_eval.12.99386804>
+
+4> ApplyFunction(Double, 8).
+16
+```
+
+## The `lists:map/2` Function
+
+`lists:map/2` is one of the most useful higher-order functions. It applies a function to every element in a list, returning a new list with the results.
+
+### Basic Usage
+
+```erlang
+% Double every number using map
+5> Numbers = [1, 2, 3, 4, 5].
+[1, 2, 3, 4, 5]
+
+6> Double = fun(X) -> X * 2 end.
+#Fun<erl_eval.6.99386804>
+
+7> lists:map(Double, Numbers).
+[2, 4, 6, 8, 10]
+```
+
+### Using Anonymous Functions
+
+You can also use anonymous functions directly.
+
+```erlang
+% Square every number
+8> lists:map(fun(X) -> X * X end, Numbers).
+[1, 4, 9, 16, 25]
+
+% Convert numbers to strings
+9> lists:map(fun(X) -> integer_to_list(X) end, Numbers).
+["1", "2", "3", "4", "5"]
+
+% Add 10 to each number
+10> lists:map(fun(X) -> X + 10 end, Numbers).
+[11, 12, 13, 14, 15]
+```
+
+### Transforming Complex Data
+
+Map works with any data structure.
+
+```erlang
+% Transform a list of tuples
+11> People = [{alice, 25}, {bob, 30}, {charlie, 35}].
+[{alice, 25}, {bob, 30}, {charlie, 35}]
+
+12> GetNames = fun({Name, _Age}) -> Name end.
+#Fun<erl_eval.6.99386804>
+
+13> lists:map(GetNames, People).
+[alice, bob, charlie]
+
+% Format person info
+14> FormatPerson = fun({Name, Age}) -> 
+14>     io_lib:format("~p is ~p years old", [Name, Age])
+14> end.
+
+15> lists:map(FormatPerson, People).
+[["alice", " is ", "25", " years old"],
+ ["bob", " is ", "30", " years old"],
+ ["charlie", " is ", "35", " years old"]]
+```
+
+## The `lists:filter/2` Function
+
+`lists:filter/2` selects elements from a list based on a condition. It keeps elements where the function returns `true`.
+
+### Basic Filtering
+
+```erlang
+% Keep only even numbers
+16> IsEven = fun(X) -> X rem 2 == 0 end.
+#Fun<erl_eval.6.99386804>
+
+17> lists:filter(IsEven, Numbers).
+[2, 4]
+
+% Keep only numbers greater than 3
+18> lists:filter(fun(X) -> X > 3 end, Numbers).
+[4, 5]
+
+% Keep only positive numbers
+19> AllNumbers = [-2, -1, 0, 1, 2, 3].
+[-2, -1, 0, 1, 2, 3]
+
+20> lists:filter(fun(X) -> X > 0 end, AllNumbers).
+[1, 2, 3]
+```
+
+### Filtering Complex Data
+
+```erlang
+% Filter people by age
+21> Adults = lists:filter(fun({_Name, Age}) -> Age >= 30 end, People).
+[{bob, 30}, {charlie, 35}]
+
+% Filter strings by length
+22> Words = ["hello", "world", "erlang", "fun", "programming"].
+["hello", "world", "erlang", "fun", "programming"]
+
+23> LongWords = lists:filter(fun(Word) -> length(Word) > 5 end, Words).
+["erlang", "programming"]
+```
+
+## The `lists:foldl/3` Function
+
+`lists:foldl/3` (fold left) reduces a list to a single value by applying a function cumulatively. It's like a super-powered accumulator.
+
+### Basic Folding
+
+```erlang
+% Sum all numbers
+24> Sum = fun(X, Acc) -> X + Acc end.
+#Fun<erl_eval.12.99386804>
+
+25> lists:foldl(Sum, 0, Numbers).
+15
+
+% Find the product of all numbers
+26> Product = fun(X, Acc) -> X * Acc end.
+27> lists:foldl(Product, 1, Numbers).
+120
+
+% Find the maximum number
+28> Max = fun(X, Acc) -> 
+28>     if X > Acc -> X; 
+28>        true -> Acc 
+28>     end 
+28> end.
+
+29> lists:foldl(Max, 0, Numbers).
+5
+```
+
+### Understanding Fold
+
+The pattern is `lists:foldl(Function, InitialValue, List)`.
+
+Let's trace through `lists:foldl(Sum, 0, [1, 2, 3])`.
+
+1. `Sum(1, 0)` → `1`
+2. `Sum(2, 1)` → `3`
+3. `Sum(3, 3)` → `6`
+4. Result: `6`
+
+### More Complex Folding
+
+```erlang
+% Build a string from a list
+30> AppendString = fun(Item, Acc) -> 
+30>     Acc ++ atom_to_list(Item) ++ " "
+30> end.
+
+31> lists:foldl(AppendString, "", [hello, world, from, erlang]).
+"hello world from erlang "
+
+% Count occurrences of elements
+32> CountOccurrences = fun(Item, Acc) ->
+32>     case lists:keyfind(Item, 1, Acc) of
+32>         false -> [{Item, 1} | Acc];
+32>         {Item, Count} -> lists:keyreplace(Item, 1, Acc, {Item, Count + 1})
+32>     end
+32> end.
+
+33> Items = [a, b, a, c, b, a].
+[a, b, a, c, b, a]
+
+34> lists:foldl(CountOccurrences, [], Items).
+[{c, 1}, {b, 2}, {a, 3}]
+```
+
+## Combining Higher-Order Functions
+
+The real power comes from combining these functions. Let's solve a common problem. We'll process a list of numbers by filtering, transforming, and then reducing.
+
+### Step by Step
+
+```erlang
+% Problem - Filter even numbers, square them, then sum the results
+35> Numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].
+[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+% Step 1 - Filter even numbers
+36> EvenNumbers = lists:filter(fun(X) -> X rem 2 == 0 end, Numbers).
+[2, 4, 6, 8, 10]
+
+% Step 2 - Square each number
+37> SquaredNumbers = lists:map(fun(X) -> X * X end, EvenNumbers).
+[4, 16, 36, 64, 100]
+
+% Step 3 - Sum the results
+38> Result = lists:foldl(fun(X, Acc) -> X + Acc end, 0, SquaredNumbers).
+220
+```
+
+### Chaining Functions
+
+We can chain these operations together.
+
+```erlang
+39> ChainedResult = lists:foldl(
+39>     fun(X, Acc) -> X + Acc end, 
+39>     0, 
+39>     lists:map(
+39>         fun(X) -> X * X end, 
+39>         lists:filter(fun(X) -> X rem 2 == 0 end, Numbers)
+39>     )
+39> ).
+220
+```
+
+## Practical Example: Message Processing
+
+Let's apply higher-order functions to our chat server.
+
+```erlang
+% Create some sample messages
+40> Messages = [
+40>     {message, "alice", "Hello everyone!", 1609459200},
+40>     {message, "bob", "Hi Alice!", 1609459260},
+40>     {message, "alice", "How is everyone doing?", 1609459320},
+40>     {message, "charlie", "Great! Thanks for asking.", 1609459380},
+40>     {message, "alice", "Thanks for the warm welcome!", 1609459440}
+40> ].
+
+% Extract all usernames
+41> GetUser = fun({message, User, _Text, _Timestamp}) -> User end.
+42> Users = lists:map(GetUser, Messages).
+["alice", "bob", "alice", "charlie", "alice"]
+
+% Filter messages from alice
+43> IsFromAlice = fun({message, "alice", _Text, _Timestamp}) -> true;
+43>                  (_) -> false
+43> end.
+44> AliceMessages = lists:filter(IsFromAlice, Messages).
+[{message, "alice", "Hello everyone!", 1609459200},
+ {message, "alice", "How is everyone doing?", 1609459320},
+ {message, "alice", "Thanks for the warm welcome!", 1609459440}]
+
+% Count total messages
+45> MessageCount = lists:foldl(fun(_, Count) -> Count + 1 end, 0, Messages).
+5
+```
+
+### Building a Message Statistics System
+
+```erlang
+% Get message text lengths
+46> GetTextLength = fun({message, _User, Text, _Timestamp}) -> length(Text) end.
+47> TextLengths = lists:map(GetTextLength, Messages).
+[15, 9, 24, 25, 29]
+
+% Calculate average message length
+48> TotalLength = lists:foldl(fun(Length, Acc) -> Length + Acc end, 0, TextLengths).
+102
+
+49> AverageLength = TotalLength / MessageCount.
+20.4
+
+% Find messages longer than average
+50> LongMessages = lists:filter(
+50>     fun({message, _User, Text, _Timestamp}) -> 
+50>         length(Text) > AverageLength 
+50>     end, 
+50>     Messages
+50> ).
+[{message, "alice", "How is everyone doing?", 1609459320},
+ {message, "charlie", "Great! Thanks for asking.", 1609459380},
+ {message, "alice", "Thanks for the warm welcome!", 1609459440}]
+```
+
+### Processing User Activity
+
+```erlang
+% Count messages per user
+51> CountUserMessages = fun(User, Messages) ->
+51>     UserMessages = lists:filter(
+51>         fun({message, U, _, _}) -> U == User end,
+51>         Messages
+51>     ),
+51>     length(UserMessages)
+51> end.
+
+52> CountUserMessages("alice", Messages).
+3
+
+% Get unique users
+53> UniqueUsers = lists:foldl(
+53>     fun(User, Acc) ->
+53>         case lists:member(User, Acc) of
+53>             true -> Acc;
+53>             false -> [User | Acc]
+53>         end
+53>     end,
+53>     [],
+53>     Users
+53> ).
+["charlie", "bob", "alice"]
+
+% Create user activity summary
+54> UserActivity = lists:map(
+54>     fun(User) -> 
+54>         {User, CountUserMessages(User, Messages)}
+54>     end,
+54>     UniqueUsers
+54> ).
+[{"charlie", 1}, {"bob", 1}, {"alice", 3}]
+```
+
+## Creating Your Own Higher-Order Functions
+
+You can write your own higher-order functions to solve specific problems.
+
+```erlang
+% Apply a function to each element and collect results
+55> ApplyToAll = fun(Function, List) ->
+55>     lists:map(Function, List)
+55> end.
+
+% Apply a function only to elements that pass a test
+56> ApplyToMatching = fun(TestFun, ApplyFun, List) ->
+56>     Filtered = lists:filter(TestFun, List),
+56>     lists:map(ApplyFun, Filtered)
+56> end.
+
+57> ApplyToMatching(
+57>     fun(X) -> X > 3 end,
+57>     fun(X) -> X * X end,
+57>     [1, 2, 3, 4, 5]
+57> ).
+[16, 25]
+
+% Process items until a condition is met
+58> ProcessUntil = fun(Condition, ProcessFun, List) ->
+58>     ProcessUntil(Condition, ProcessFun, List, [])
+58> end.
+
+% Helper function (you'd normally put this in a module)
+59> ProcessUntil = fun ProcessUntil(Condition, ProcessFun, [Head | Tail], Acc) ->
+59>     ProcessedItem = ProcessFun(Head),
+59>     NewAcc = [ProcessedItem | Acc],
+59>     case Condition(ProcessedItem) of
+59>         true -> lists:reverse(NewAcc);
+59>         false -> ProcessUntil(Condition, ProcessFun, Tail, NewAcc)
+59>     end;
+59> ProcessUntil(_, _, [], Acc) -> lists:reverse(Acc)
+59> end.
+```
+
+## The Power of Composition
+
+Higher-order functions enable powerful composition patterns.
+
+```erlang
+% Create a pipeline of transformations
+60> Pipeline = fun(Data) ->
+60>     Step1 = lists:filter(fun(X) -> X > 0 end, Data),
+60>     Step2 = lists:map(fun(X) -> X * 2 end, Step1),
+60>     Step3 = lists:foldl(fun(X, Acc) -> X + Acc end, 0, Step2),
+60>     Step3
+60> end.
+
+61> Pipeline([-1, 2, -3, 4, 5]).
+22
+
+% Create reusable transformations
+62> Transform = fun(FilterFun, MapFun, FoldFun, InitialValue) ->
+62>     fun(Data) ->
+62>         lists:foldl(
+62>             FoldFun,
+62>             InitialValue,
+62>             lists:map(
+62>                 MapFun,
+62>                 lists:filter(FilterFun, Data)
+62>             )
+62>         )
+62>     end
+62> end.
+
+63> SumSquaresOfEvens = Transform(
+63>     fun(X) -> X rem 2 == 0 end,
+63>     fun(X) -> X * X end,
+63>     fun(X, Acc) -> X + Acc end,
+63>     0
+63> ).
+
+64> SumSquaresOfEvens([1, 2, 3, 4, 5, 6]).
+56
+```
+
+## Common Higher-Order Patterns
+
+### 1. Map Pattern
+Transform each element.
+```erlang
+lists:map(fun(X) -> transform(X) end, List)
+```
+
+### 2. Filter Pattern
+Select elements based on condition.
+```erlang
+lists:filter(fun(X) -> condition(X) end, List)
+```
+
+### 3. Fold Pattern
+Reduce to single value.
+```erlang
+lists:foldl(fun(X, Acc) -> combine(X, Acc) end, Initial, List)
+```
+
+### 4. Map-Filter-Fold Pattern
+Complete data processing pipeline.
+```erlang
+lists:foldl(
+    ReduceFun,
+    InitialValue,
+    lists:map(
+        TransformFun,
+        lists:filter(FilterFun, List)
+    )
+)
+```
+
+## Key Takeaways
+
+1. **Higher-order functions** work with other functions as arguments or return values
+2. **`lists:map/2`** transforms each element in a list
+3. **`lists:filter/2`** selects elements based on a condition
+4. **`lists:foldl/3`** reduces a list to a single value
+5. **Function composition** creates powerful data processing pipelines
+6. **Anonymous functions** (`fun(X) -> ... end`) are perfect for simple transformations
+7. **Chaining operations** eliminates intermediate variables and creates readable code
+
+## Next Steps
+
+In the next lesson, we'll explore list comprehensions, which provide even more concise syntax for the patterns we've learned here. We'll also dive deeper into data manipulation techniques that will be crucial for our chat server's message handling.
+
+Higher-order functions are fundamental to functional programming and will appear throughout your Erlang journey. They make code more reusable, testable, and expressive.
+
+---
+
+import ErlangKoans from '../../components/ErlangKoans.astro';
+
+<ErlangKoans koans={[
+  {
+    id: "map_usage",
+    question: "Use lists:map to convert numbers to strings",
+    code: "Numbers = [1, 2, 3, 4, 5],\nStrings = lists:map(fun(X) -> ___ end, Numbers).",
+    answer: "integer_to_list(X)"
+  },
+  {
+    id: "filter_usage",
+    question: "Filter numbers greater than 3",
+    code: "Numbers = [1, 2, 3, 4, 5, 6],\nBigNumbers = lists:filter(fun(X) -> X ___ 3 end, Numbers).",
+    answer: ">"
+  },
+  {
+    id: "foldl_product",
+    question: "What operation should be used to find the product?",
+    code: "Numbers = [1, 2, 3, 4],\nProduct = lists:foldl(fun(X, Acc) -> X ___ Acc end, 1, Numbers).",
+    answer: "*"
+  },
+  {
+    id: "map_transform",
+    question: "Transform tuples to extract first element",
+    code: "Tuples = [{a, 1}, {b, 2}, {c, 3}],\nFirsts = lists:map(fun({First, _Second}) -> ___ end, Tuples).",
+    answer: "First"
+  },
+  {
+    id: "filter_even",
+    question: "Filter to keep only even numbers",
+    code: "Numbers = [1, 2, 3, 4, 5, 6, 7, 8],\nEvens = lists:filter(fun(X) -> X ___ 2 == 0 end, Numbers).",
+    answer: "rem"
+  },
+  {
+    id: "foldl_max",
+    question: "Use foldl to find maximum value",
+    code: "Numbers = [3, 1, 4, 1, 5, 9, 2, 6],\nMax = lists:foldl(fun(X, Acc) -> if X > Acc -> ___; true -> Acc end end, 0, Numbers).",
+    answer: "X"
+  },
+  {
+    id: "message_extract",
+    question: "Extract usernames from messages",
+    code: "Messages = [{message, \"alice\", \"hi\", 123}, {message, \"bob\", \"hello\", 124}],\nUsers = lists:map(fun({message, User, _Text, _Time}) -> ___ end, Messages).",
+    answer: "User"
+  },
+  {
+    id: "higher_order_chain",
+    question: "Chain filter, map, and foldl operations",
+    code: "Numbers = [1, 2, 3, 4, 5, 6],\nResult = lists:foldl(\n    fun(X, Acc) -> X + Acc end,\n    0,\n    lists:map(\n        fun(X) -> X * X end,\n        lists:filter(fun(X) -> X ___ 2 == 0 end, Numbers)\n    )\n).",
+    answer: "rem"
+  }
+]} />
