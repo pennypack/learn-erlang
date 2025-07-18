@@ -37,15 +37,57 @@ export default {
             },
             h1: {
               color: theme('colors.gray.100'),
+              code: {
+                backgroundColor: theme('colors.gray.100'),
+                color: theme('colors.gray.800'),
+                padding: '0.125rem 0.375rem',
+                borderRadius: '0.25rem',
+              },
             },
             h2: {
               color: theme('colors.gray.100'),
+              code: {
+                backgroundColor: theme('colors.gray.100'),
+                color: theme('colors.gray.800'),
+                padding: '0.125rem 0.375rem',
+                borderRadius: '0.25rem',
+              },
             },
             h3: {
               color: theme('colors.gray.100'),
+              code: {
+                backgroundColor: theme('colors.gray.100'),
+                color: theme('colors.gray.800'),
+                padding: '0.125rem 0.375rem',
+                borderRadius: '0.25rem',
+              },
             },
             h4: {
               color: theme('colors.gray.100'),
+              code: {
+                backgroundColor: theme('colors.gray.100'),
+                color: theme('colors.gray.800'),
+                padding: '0.125rem 0.375rem',
+                borderRadius: '0.25rem',
+              },
+            },
+            h5: {
+              color: theme('colors.gray.100'),
+              code: {
+                backgroundColor: theme('colors.gray.100'),
+                color: theme('colors.gray.800'),
+                padding: '0.125rem 0.375rem',
+                borderRadius: '0.25rem',
+              },
+            },
+            h6: {
+              color: theme('colors.gray.100'),
+              code: {
+                backgroundColor: theme('colors.gray.100'),
+                color: theme('colors.gray.800'),
+                padding: '0.125rem 0.375rem',
+                borderRadius: '0.25rem',
+              },
             },
             strong: {
               color: theme('colors.gray.100'),

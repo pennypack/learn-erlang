@@ -57,6 +57,19 @@
   .progress-ring-circle {
     @apply transition-all duration-500 ease-in-out;
   }
+
+  /* Fix heading code styles in dark mode */
+  .dark .prose h1 code,
+  .dark .prose h2 code,
+  .dark .prose h3 code,
+  .dark .prose h4 code,
+  .dark .prose h5 code,
+  .dark .prose h6 code {
+    background-color: rgb(243, 244, 246) !important;
+    color: rgb(31, 41, 55) !important;
+    padding: 0.125rem 0.375rem !important;
+    border-radius: 0.25rem !important;
+  }
 }
 
 @layer utilities {
