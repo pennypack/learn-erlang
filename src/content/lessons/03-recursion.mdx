@@ -1,0 +1,415 @@
+---
+title: "Recursion"
+description: "Master recursive functions and learn how to break problems into smaller, manageable pieces using Erlang's powerful recursive programming model"
+postNumber: 3
+publishDate: 2025-07-17T00:00:00Z
+tags: ["beginner", "recursion", "functional"]
+difficulty: "beginner"
+---
+
+# Recursion
+
+In this lesson, we'll explore one of the most fundamental concepts in functional programming: recursion. This is how Erlang handles repetition and processes data structures like lists and trees.
+
+## Understanding Recursion
+
+In programming, recursion breaks big problems into smaller, similar problems until we reach a simple case we can solve directly.
+
+### Your First Recursive Function
+
+Let's start a simple example of counting down from a number:
+
+```erlang
+% Start the Erlang shell
+$ erl
+
+% Define a countdown function
+1> Countdown = fun(0) ->
+1>     io:format("Blast off!~n");
+1> (N) ->
+1>     io:format("~p~n", [N]),
+1>     Countdown(N - 1)
+1> end.
+
+% Try it out
+2> Countdown(5).
+5
+4
+3
+2
+1
+Blast off!
+```
+
+Let's break this down step by step:
+
+1. **Base case**: `Countdown(0)` prints "Blast off!" and stops
+2. **Recursive case**: `Countdown(N)` prints N, then calls itself with N-1
+3. **Progress**: Each call gets us closer to the base case
+
+This pattern (base case plus recursive case) is the foundation of all recursive functions.
+
+## The Anatomy of Recursion
+
+Every recursive function needs three key components:
+
+### 1. Base Case
+
+The condition that stops the recursion. Without this, your function would run forever!
+
+### 2. Recursive Case
+
+The part where the function calls itself with modified parameters.
+
+### 3. Progress Toward Base Case
+
+Each recursive call must get closer to the base case.
+
+Let's see this in a simple example:
+
+```erlang
+% Count down from any number
+3> CountDown = fun
+3>     (0) -> io:format("Done!~n");  % Base case
+3>     (N) when N > 0 ->             % Recursive case with guard
+3>         io:format("~p~n", [N]),
+3>         CountDown(N - 1)           % Progress: N gets smaller
+3> end.
+```
+
+## Processing Lists with Recursion
+
+Now let's apply recursion to something more practical: processing lists. In Erlang, we typically process lists by handling the head (first element) and recursively processing the tail (rest of the list).
+
+### Counting List Elements
+
+```erlang
+% Count the number of elements in a list
+4> CountList = fun
+4>     ([]) -> 0;  % Base case: empty list has 0 elements
+4>     ([_Head | Tail]) -> 1 + CountList(Tail)  % Recursive case
+4> end.
+
+5> CountList([1, 2, 3, 4, 5]).
+5
+
+6> CountList([]).
+0
+
+7> CountList([hello, world]).
+2
+```
+
+Let's trace through `CountList([1, 2, 3])`:
+
+1. `CountList([1, 2, 3])` → `1 + CountList([2, 3])`
+2. `CountList([2, 3])` → `1 + CountList([3])`
+3. `CountList([3])` → `1 + CountList([])`
+4. `CountList([])` → `0`
+5. Working backwards: `1 + (1 + (1 + 0))` = `3`
+
+### Finding the Sum of Numbers
+
+```erlang
+% Sum all numbers in a list
+8> SumList = fun
+8>     ([]) -> 0;  % Base case: empty list sums to 0
+8>     ([Head | Tail]) -> Head + SumList(Tail)  % Add head to sum of tail
+8> end.
+
+9> SumList([1, 2, 3, 4, 5]).
+15
+
+10> SumList([10, 20, 30]).
+60
+```
+
+### Building New Lists
+
+A common pattern is building a new list by transforming each element of an existing list:
+
+```erlang
+% Double every number in a list
+11> DoubleList = fun
+11>     ([]) -> [];  % Base case: empty list returns empty list
+11>     ([Head | Tail]) -> [Head * 2 | DoubleList(Tail)]  % Double head, recurse on tail
+11> end.
+
+12> DoubleList([1, 2, 3, 4]).
+[2, 4, 6, 8]
+
+% Convert numbers to strings
+13> NumbersToStrings = fun
+13>     ([]) -> [];
+13>     ([Head | Tail]) -> [integer_to_list(Head) | NumbersToStrings(Tail)]
+13> end.
+
+14> NumbersToStrings([1, 2, 3]).
+["1", "2", "3"]
+```
+
+Notice the pattern: `[ProcessedHead | ProcessedTail]`. This is how we build new lists in Erlang.
+
+## Tail Recursion: An Important Optimization
+
+The recursive functions we've written so far accumulate work as they recurse. A more efficient approach is **tail recursion**, where the recursive call is the last operation.
+
+### What Makes a Call "Tail Recursive"?
+
+A function is tail recursive when the recursive call is the very last thing that happens before returning. This means no additional computation happens after the recursive call returns. When Erlang sees this pattern, it can optimize by reusing the current stack frame instead of creating a new one for each call. This optimization is called **tail call optimization** (TCO).
+
+### Understanding the Problem
+
+Let's look at our sum function again:
+
+```erlang
+SumList([1, 2, 3]) →
+  1 + SumList([2, 3]) →
+  1 + (2 + SumList([3])) →
+  1 + (2 + (3 + SumList([]))) →
+  1 + (2 + (3 + 0)) →
+  1 + (2 + 3) →
+  1 + 5 →
+  6
+```
+
+Each recursive call must wait for the result of the next call. This uses stack space for each call.
+
+Notice the `1 + SumList([2, 3])` pattern: the addition happens AFTER the recursive call returns. This is NOT tail recursive because we still have work to do (the addition) after the recursive call completes.
+
+### The Tail Recursive Solution
+
+With tail recursion, we use an accumulator to build up the result:
+
+```erlang
+% Tail-recursive version with accumulator
+15> SumListTail = fun
+15>     ([], Acc) -> Acc;  % Base case: return accumulator
+15>     ([Head | Tail], Acc) -> SumListTail(Tail, Acc + Head)  % Add to accumulator
+15> end.
+
+% Helper function to start with accumulator = 0
+16> SumList2 = fun(List) -> SumListTail(List, 0) end.
+
+17> SumList2([1, 2, 3, 4, 5]).
+15
+```
+
+Let's trace through `SumList2([1, 2, 3])`:
+
+1. `SumListTail([1, 2, 3], 0)` → `SumListTail([2, 3], 1)`
+2. `SumListTail([2, 3], 1)` → `SumListTail([3], 3)`
+3. `SumListTail([3], 3)` → `SumListTail([], 6)`
+4. `SumListTail([], 6)` → `6`
+
+No waiting! Each call can immediately call the next with the updated accumulator.
+
+### Why This Matters
+
+The key difference:
+- **Non-tail recursive**: `Head + SumList(Tail)` - must wait for SumList to return before adding
+- **Tail recursive**: `SumListTail(Tail, Acc + Head)` - the recursive call IS the return value
+
+With tail recursion, Erlang can optimize by:
+1. Reusing the same stack frame for each call
+2. Converting recursion into a loop internally
+3. Handling millions of iterations without stack overflow
+
+This makes tail recursion essential for processing large data sets or implementing long-running server loops.
+
+### More Tail Recursive Examples
+
+```erlang
+% Tail-recursive list reversal
+18> ReverseList = fun
+18>     ([], Acc) -> Acc;
+18>     ([Head | Tail], Acc) -> ReverseList(Tail, [Head | Acc])
+18> end.
+
+19> ReverseList([1, 2, 3, 4], []).
+[4, 3, 2, 1]
+
+% Tail-recursive factorial
+20> Factorial = fun
+20>     (0, Acc) -> Acc;
+20>     (N, Acc) -> Factorial(N - 1, N * Acc)
+20> end.
+
+21> Factorial(5, 1).
+120
+```
+
+## Practical Example: Message Processing
+
+Let's apply recursion to our chat server by building a message processing system:
+
+```erlang
+% Define a message record structure
+22> Message = fun(User, Text, Timestamp) ->
+22>     {message, User, Text, Timestamp}
+22> end.
+
+% Create some sample messages
+23> Messages = [
+23>     Message("alice", "Hello everyone!", 1609459200),
+23>     Message("bob", "Hi Alice!", 1609459260),
+23>     Message("alice", "How is everyone doing?", 1609459320),
+23>     Message("charlie", "Great! Thanks for asking.", 1609459380)
+23> ].
+
+% Count messages from a specific user
+24> CountUserMessages = fun
+24>     ([], _User, Count) -> Count;
+24>     ([{message, User, _, _} | Tail], User, Count) ->
+24>         CountUserMessages(Tail, User, Count + 1);
+24>     ([_Message | Tail], User, Count) ->
+24>         CountUserMessages(Tail, User, Count)
+24> end.
+
+25> CountUserMessages(Messages, "alice", 0).
+2
+
+% Extract all usernames
+26> ExtractUsers = fun
+26>     ([]) -> [];
+26>     ([{message, User, _, _} | Tail]) -> [User | ExtractUsers(Tail)]
+26> end.
+
+27> ExtractUsers(Messages).
+["alice", "bob", "alice", "charlie"]
+```
+
+### Building a Message Filter
+
+```erlang
+% Filter messages from a specific user
+28> FilterUserMessages = fun
+28>     ([], _User) -> [];
+28>     ([{message, User, _, _} = Message | Tail], User) ->
+28>         [Message | FilterUserMessages(Tail, User)];
+28>     ([_Message | Tail], User) ->
+28>         FilterUserMessages(Tail, User)
+28> end.
+
+29> FilterUserMessages(Messages, "alice").
+[{message, "alice", "Hello everyone!", 1609459200},
+ {message, "alice", "How is everyone doing?", 1609459320}]
+```
+
+## Common Recursive Patterns
+
+Here are the most common patterns you'll use:
+
+### 1. List Processing (Simple)
+
+```erlang
+ProcessList = fun
+    ([]) -> BaseValue;
+    ([Head | Tail]) -> ProcessElement(Head, ProcessList(Tail))
+end.
+```
+
+### 2. List Processing (Tail Recursive)
+
+```erlang
+ProcessListTail = fun
+    ([], Acc) -> Acc;
+    ([Head | Tail], Acc) ->
+        NewAcc = UpdateAccumulator(Head, Acc),
+        ProcessListTail(Tail, NewAcc)
+end.
+```
+
+### 3. List Building
+
+```erlang
+BuildList = fun
+    ([]) -> [];
+    ([Head | Tail]) -> [TransformElement(Head) | BuildList(Tail)]
+end.
+```
+
+### 4. List Filtering
+
+```erlang
+FilterList = fun
+    ([]) -> [];
+    ([Head | Tail]) ->
+        case ConditionMet(Head) of
+            true -> [Head | FilterList(Tail)];
+            false -> FilterList(Tail)
+        end
+end.
+```
+
+## When to Use Recursion
+
+Recursion is ideal when:
+
+1. **Processing lists**: Most list operations in Erlang use recursion
+2. **Tree traversal**: Navigating hierarchical data structures
+3. **Divide and conquer**: Breaking problems into smaller pieces
+4. **Mathematical sequences**: Factorial, Fibonacci, etc.
+5. **Parsing**: Breaking down complex input step by step
+
+## Key Takeaways
+
+1. **Every recursive function needs a base case** to stop the recursion
+2. **Each recursive call must make progress** toward the base case
+3. **Tail recursion is more memory-efficient** than simple recursion
+4. **Use accumulators** to convert simple recursion to tail recursion
+5. **Pattern matching with head/tail** is the standard way to process lists
+6. **Recursion is fundamental** to functional programming in Erlang
+
+## Next Steps
+
+In the next lesson, we'll explore higher-order functions like `map`, `filter`, and `fold`. These powerful functions use recursion internally but provide a more declarative way to process data.
+
+The recursive thinking you've learned here is fundamental to Erlang programming. As we progress, you'll see how recursion naturally extends to process-based programming and distributed systems.
+
+---
+
+import ErlangKoans from "../../components/ErlangKoans.astro";
+
+<ErlangKoans
+  koans={[
+    {
+      id: "recursion_sum_base",
+      question: "What should the base case return for a sum function?",
+      code: "SumList = fun\n    ([]) -> ___;\n    ([Head | Tail]) -> Head + SumList(Tail)\nend.",
+      answer: "0",
+    },
+    {
+      id: "recursion_count_base",
+      question: "What should the base case return for a count function?",
+      code: "CountList = fun\n    ([]) -> ___;\n    ([_Head | Tail]) -> 1 + CountList(Tail)\nend.",
+      answer: "0",
+    },
+    {
+      id: "recursion_transform",
+      question: "How do you add 1 to the head element?",
+      code: "AddOne = fun\n    ([]) -> [];\n    ([Head | Tail]) -> [___ | AddOne(Tail)]\nend.",
+      answer: "Head + 1",
+    },
+    {
+      id: "tail_recursion_acc",
+      question:
+        "What should be returned when the list is empty in tail recursion?",
+      code: "ReverseList = fun\n    ([], Acc) -> ___;\n    ([Head | Tail], Acc) -> ReverseList(Tail, [Head | Acc])\nend.",
+      answer: "Acc",
+    },
+    {
+      id: "recursion_factorial_base",
+      question: "What is the base case value for factorial?",
+      code: "Factorial = fun\n    (0) -> ___;\n    (N) -> N * Factorial(N - 1)\nend.",
+      answer: "1",
+    },
+    {
+      id: "message_count_increment",
+      question:
+        "How much should we increment the count when we find a matching user message?",
+      code: "CountUserMessages = fun\n    ([], _User, Count) -> Count;\n    ([{message, User, _, _} | Tail], User, Count) ->\n        CountUserMessages(Tail, User, Count + ___);\n    ([_Message | Tail], User, Count) ->\n        CountUserMessages(Tail, User, Count)\nend.",
+      answer: "1",
+    },
+  ]}
+/>

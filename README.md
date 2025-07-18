@@ -86,6 +86,32 @@ When contributing lessons or koans:
 - Test all code examples
 - Follow the writing style in existing lessons
 
+### Koan Guidelines
+
+When creating or modifying koans:
+
+1. **Single Blank Rule**: Every koan MUST have exactly one `___` blank
+2. **Clear Questions**: Questions should be specific about what goes in the blank
+3. **Simple Answers**: Answers should be single values, expressions, or identifiers (not comma-separated lists)
+4. **Test Coverage**: All koan patterns MUST have corresponding tests in `js-erlang-interpreter/tests/`
+5. **Validation Types**: Use appropriate validation hints:
+   - `value_check`: For numeric or string values
+   - `pattern_check`: For pattern matching scenarios
+   - Default: Simple string comparison
+
+Example koan structure:
+```javascript
+{
+  id: "unique_koan_id",
+  question: "What value makes this base case work?",
+  code: "Factorial = fun\n    (0) -> ___;\n    (N) -> N * Factorial(N - 1)\nend.",
+  answer: "1",
+  validation: "value_check", // optional
+  hint: "Think about 0! = ?", // optional
+  explanation: "The factorial of 0 is defined as 1" // optional
+}
+```
+
 ### Code Style
 
 - Use TypeScript for new components
@@ -162,6 +188,13 @@ The interpreter needs enhancement to support more advanced koans. Areas for impr
 - Binary syntax
 - Guards and list comprehensions
 - Module system basics
+
+**Testing Requirements**: When adding new koan patterns or interpreter features:
+1. All koan patterns MUST have corresponding test cases in `js-erlang-interpreter/tests/`
+2. Test files should follow the naming convention: `lessonXX-koans.test.js`
+3. Each test should validate that the koan's expected answer produces the correct result
+4. Run tests with `npm test` in the `js-erlang-interpreter` directory
+5. Ensure all tests pass before submitting a PR
 
 If you're interested in extending the interpreter, see `/js-erlang-interpreter/README.md` for implementation details.
 
