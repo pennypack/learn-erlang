@@ -116,74 +116,10 @@ const { koans } = Astro.props;
 </div>
 
 <script>
-  class KoanValidator {
-    constructor() {
-      // Ready to validate
-    }
+  // Import the shared validation logic
+  const { KoanValidator } = await import('../../js-erlang-interpreter/src/koan-validator.js');
 
-    async validateAnswer(userAnswer: string, expectedAnswer: string, validationHint: string) {
-      // For the specific case of pattern matching, we can validate semantically
-      if (validationHint === 'pattern_check') {
-        // This is a pattern matching validation
-        try {
-          // Check if it's a list that would make Second = 20
-          if (userAnswer.includes('[') && userAnswer.includes(']')) {
-            const numbers = userAnswer.replace(/\[|\]/g, '').split(',').map(n => n.trim());
-            if (numbers.length === 3 && numbers[1] === '20') {
-              return true;
-            }
-          }
-          
-          // Check if it's a tuple that would make Status = ok and Value = 42
-          if (userAnswer.includes('{') && userAnswer.includes('}')) {
-            const cleanAnswer = userAnswer.replace(/[{}]/g, '').split(',').map(s => s.trim());
-            if (cleanAnswer.length === 2 && cleanAnswer[0] === 'ok' && cleanAnswer[1] === '42') {
-              return true;
-            }
-          }
-          
-          return false;
-        } catch (error) {
-          return false;
-        }
-      }
-      
-      // For arithmetic and other value checks, allow flexible matching
-      if (validationHint === 'value_check' || !validationHint) {
-        // Remove whitespace and check if it's the expected value
-        const cleanUser = userAnswer.trim();
-        const cleanExpected = expectedAnswer.trim();
-        
-        // Try to parse as numbers for arithmetic
-        const userNum = parseFloat(cleanUser);
-        const expectedNum = parseFloat(cleanExpected);
-        
-        if (!isNaN(userNum) && !isNaN(expectedNum)) {
-          return userNum === expectedNum;
-        }
-        
-        // Handle Erlang expression patterns like "Head + 1"
-        if (cleanExpected.includes('+') || cleanExpected.includes('-') || cleanExpected.includes('*') || cleanExpected.includes('/')) {
-          // Allow flexible matching for arithmetic expressions
-          const normalizeExpr = (expr: string) => expr.replace(/\s+/g, ' ').trim();
-          return normalizeExpr(cleanUser) === normalizeExpr(cleanExpected);
-        }
-        
-        // Case-insensitive matching for Erlang atoms and variables
-        if (cleanExpected.toLowerCase() === cleanUser.toLowerCase()) {
-          return true;
-        }
-        
-        // Otherwise do string comparison
-        return cleanUser === cleanExpected;
-      }
-      
-      // Default to string comparison
-      return userAnswer === expectedAnswer;
-    }
-  }
-
-  let validator: KoanValidator;
+  let validator: InstanceType<typeof KoanValidator>;
 
   function initializeKoans() {
     validator = new KoanValidator();

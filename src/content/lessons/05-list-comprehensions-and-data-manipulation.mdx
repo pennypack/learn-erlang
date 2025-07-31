@@ -1,42 +1,329 @@
 ---
-title: "[Coming Soon] List Comprehensions and Data Manipulation"
-description: "Learn advanced list processing techniques, comprehensions, and data transformation patterns essential for building robust chat server functionality"
+title: "List Comprehensions and Data Manipulation"
+description: "Master Erlang's concise list comprehensions for filtering, transforming, and generating data efficiently"
 postNumber: 5
-publishDate: 2025-07-09T00:00:00Z
-tags: ["intermediate","lists","data-structures"]
-difficulty: "intermediate"
+publishDate: 2025-07-31T00:00:00Z
+tags: ["beginner", "list-comprehensions", "functional"]
+difficulty: "beginner"
 ---
+
+import ErlangKoans from "../../components/ErlangKoans.astro";
 
 # List Comprehensions and Data Manipulation
 
-## Coming Soon
+In the previous lesson, we explored higher-order functions like `map`, `filter`, and `fold`. List comprehensions provide a more concise and often more readable way to achieve similar results. They're particularly useful for our chat server when we need to transform or filter collections of users, messages, or rooms.
 
-This lesson will explore Erlang's powerful list comprehension syntax and advanced data manipulation techniques. You'll learn how to:
+## Basic List Comprehension Syntax
 
-- Write elegant list comprehensions for filtering and transforming data
-- Use generators and filters to process complex data structures
-- Build efficient data transformation pipelines
-- Apply advanced filtering and sorting techniques
-- Create data validation and sanitization functions
-
-### What You'll Build
-
-By the end of this lesson, you'll have implemented:
-- A comprehensive message filtering system
-- User data validation and transformation utilities
-- Efficient data processing pipelines for chat server operations
-- Advanced sorting and grouping functions
-
-### Key Concepts Preview
+List comprehensions in Erlang follow a simple pattern:
 
 ```erlang
-% List comprehensions for filtering and transforming
-ActiveUsers = [User || {User, Status} <- Users, Status =:= active],
-ValidMessages = [Msg || Msg <- Messages, is_valid_message(Msg)].
+1> [X * 2 || X <- [1, 2, 3, 4, 5]].
+[2,4,6,8,10]
+
+2> [X || X <- [1, 2, 3, 4, 5], X > 3].
+[4,5]
 ```
 
-This lesson builds on the recursive patterns from Lesson 3 and prepares you for the complex data structures we'll use in Lesson 5.
+The basic syntax is `[Expression || Pattern <- List, Filter1, Filter2, ...]`.
 
----
+## Generators and Patterns
 
-_This lesson is currently under development. Check back soon for the complete content!_
+The `Pattern <- List` part is called a generator. You can use pattern matching here:
+
+```erlang
+3> Users = [{user, "Alice", 25}, {user, "Bob", 30}, {admin, "Charlie", 35}].
+[{user,"Alice",25},{user,"Bob",30},{admin,"Charlie",35}]
+
+4> [Name || {user, Name, _} <- Users].
+["Alice","Bob"]
+
+5> [Name || {_, Name, Age} <- Users, Age > 28].
+["Bob","Charlie"]
+```
+
+## Multiple Generators
+
+You can use multiple generators to create combinations:
+
+```erlang
+6> [X * Y || X <- [1, 2, 3], Y <- [10, 100]].
+[10,100,20,200,30,300]
+
+7> [{X, Y} || X <- [a, b], Y <- [1, 2, 3]].
+[{a,1},{a,2},{a,3},{b,1},{b,2},{b,3}]
+```
+
+The order matters. When you have multiple generators, Erlang processes them like nested loops. The rightmost generator (Y in this case) cycles through all its values before the left generator (X) moves to its next value. That's why we get `{a,1}, {a,2}, {a,3}` before moving to `{b,1}, {b,2}, {b,3}`.
+
+## Filters in List Comprehensions
+
+Filters are boolean expressions that determine which elements to include:
+
+```erlang
+8> [X || X <- lists:seq(1, 20), X rem 3 =:= 0].
+[3,6,9,12,15,18]
+
+9> Messages = [{msg, "Hello", 5}, {msg, "Hi", 2}, {msg, "World", 5}].
+[{msg,"Hello",5},{msg,"Hi",2},{msg,"World",5}]
+
+10> [Text || {msg, Text, Len} <- Messages, Len > 3].
+["Hello","World"]
+```
+
+## Transforming Nested Data
+
+List comprehensions excel at working with nested structures:
+
+```erlang
+11> Rooms = [
+11>   {room, "general", ["Alice", "Bob"]},
+11>   {room, "erlang", ["Bob", "Charlie"]},
+11>   {room, "elixir", ["Alice", "Charlie", "Dave"]}
+11> ].
+[{room,"general",["Alice","Bob"]},
+ {room,"erlang",["Bob","Charlie"]},
+ {room,"elixir",["Alice","Charlie","Dave"]}]
+
+12> [User || {room, _, Users} <- Rooms, User <- Users].
+["Alice","Bob","Bob","Charlie","Alice","Charlie","Dave"]
+
+13> lists:usort([User || {room, _, Users} <- Rooms, User <- Users]).
+["Alice","Bob","Charlie","Dave"]
+```
+
+## List Comprehensions vs Higher-Order Functions
+
+Compare these equivalent operations:
+
+```erlang
+14> Numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].
+[1,2,3,4,5,6,7,8,9,10]
+
+15> lists:map(fun(X) -> X * X end,
+15>   lists:filter(fun(X) -> X rem 2 =:= 0 end, Numbers)).
+[4,16,36,64,100]
+
+16> [X * X || X <- Numbers, X rem 2 =:= 0].
+[4,16,36,64,100]
+```
+
+The list comprehension is more concise and often clearer.
+
+## Practical Chat Server Examples
+
+Here's how we might use list comprehensions in our chat server:
+
+```erlang
+17> ActiveUsers = [
+17>   {user, "Alice", online, 1200},
+17>   {user, "Bob", away, 300},
+17>   {user, "Charlie", online, 5400},
+17>   {user, "Dave", offline, 0}
+17> ].
+[{user,"Alice",online,1200},
+ {user,"Bob",away,300},
+ {user,"Charlie",online,5400},
+ {user,"Dave",offline,0}]
+
+18> OnlineNames = [Name || {user, Name, Status, _} <- ActiveUsers,
+18>                         Status =:= online].
+["Alice","Charlie"]
+
+19> ActiveNotifications = [{Name, "is active"} ||
+19>                         {user, Name, Status, MessageCount} <- ActiveUsers,
+19>                         Status =/= offline,
+19>                         MessageCount > 1000].
+[{"Alice","is active"},{"Charlie","is active"}]
+```
+
+## Building Complex Queries
+
+List comprehensions can replace complex filter and map chains:
+
+```erlang
+20> ChatHistory = [
+20>   {message, "Alice", "general", "Hello everyone!", 1000},
+20>   {message, "Bob", "general", "Hi Alice!", 1001},
+20>   {message, "Charlie", "erlang", "Check out this code", 1002},
+20>   {message, "Alice", "general", "How's everyone doing?", 1003},
+20>   {message, "Bob", "erlang", "Nice example!", 1004}
+20> ].
+[{message,"Alice","general","Hello everyone!",1000},
+ {message,"Bob","general","Hi Alice!",1001},
+ {message,"Charlie","erlang","Check out this code",1002},
+ {message,"Alice","general","How's everyone doing?",1003},
+ {message,"Bob","erlang","Nice example!",1004}]
+
+21> AliceInGeneral = [
+21>   {Timestamp, Text} ||
+21>   {message, User, Room, Text, Timestamp} <- ChatHistory,
+21>   User =:= "Alice",
+21>   Room =:= "general"
+21> ].
+[{1000,"Hello everyone!"},{1003,"How's everyone doing?"}]
+
+22> MessagesByRoom = fun(RoomName) ->
+22>   [Text || {message, _, Room, Text, _} <- ChatHistory, Room =:= RoomName]
+22> end.
+#Fun<erl_eval.42.65746770>
+
+23> MessagesByRoom("erlang").
+["Check out this code","Nice example!"]
+```
+
+## Working with Binary Data
+
+List comprehensions also work with binaries, useful for protocol parsing:
+
+```erlang
+24> Binary = <<"hello">>.
+<<"hello">>
+
+25> [X || <<X>> <= Binary].
+[104,101,108,108,111]
+
+26> [X || <<X>> <= Binary, X > 105].
+[108,108,111]
+
+27> << <<(X + 32)>> || <<X>> <= <<"HELLO">>, X >= $A, X =< $Z >>.
+<<"hello">>
+```
+
+## Performance Considerations
+
+List comprehensions are optimized by the compiler and often perform better than equivalent recursive functions:
+
+```erlang
+28> LargeList = lists:seq(1, 1000000).
+[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,
+ 23,24,25,26,27,28,29|...]
+
+29> timer:tc(fun() -> [X * 2 || X <- LargeList, X rem 2 =:= 0] end).
+{45821,[2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,
+         38,40,42,44,46,48,50|...]}
+
+30> timer:tc(fun() ->
+30>   lists:map(fun(X) -> X * 2 end,
+30>     lists:filter(fun(X) -> X rem 2 =:= 0 end, LargeList))
+30> end).
+{92543,[2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,
+         38,40,42,44,46,48,50|...]}
+```
+
+List comprehensions are nearly twice as fast in this example.
+
+## Exercises
+
+**Exercise 1: Message Filtering**
+
+Write a list comprehension that extracts all usernames from messages sent in the last hour (assuming current timestamp is 2000):
+
+```erlang
+Messages = [
+  {msg, "Alice", "Hello", 1950},
+  {msg, "Bob", "Hi", 1980},
+  {msg, "Charlie", "Hey", 1920}
+].
+% Expected result: ["Alice", "Bob"]
+```
+
+**Exercise 2: Cartesian Product**
+
+Create a list comprehension that generates all possible room-user pairs from two lists:
+
+```erlang
+Rooms = ["general", "random", "erlang"].
+Users = ["Alice", "Bob"].
+% Expected result:
+% [{"general","Alice"},{"general","Bob"},
+%  {"random","Alice"},{"random","Bob"},
+%  {"erlang","Alice"},{"erlang","Bob"}]
+```
+
+**Exercise 3: Word Search**
+
+Write a function using list comprehensions that finds all messages containing a specific word (case-insensitive):
+
+```erlang
+find_messages_with_word(Word, Messages) ->
+    % Your implementation here
+```
+
+## Key Takeaways
+
+- **List comprehensions** provide a concise alternative to `map` and `filter` operations
+- **Basic syntax**: `[Expression || Pattern <- List, Filter1, Filter2, ...]`
+- **Generators** (`Pattern <- List`) can use pattern matching to destructure elements
+- **Multiple generators** create cartesian products - rightmost varies fastest
+- **Filters** are boolean expressions that determine which elements to include
+- **Performance**: List comprehensions are optimized by the compiler and often outperform equivalent recursive functions
+- **Binary comprehensions** (`<< <<Expr>> || <<Pattern>> <= Binary >>`) work similarly for binary data
+
+## Interactive Koans
+
+Practice your understanding with these fill-in-the-blank exercises:
+
+<ErlangKoans
+  koans={[
+    {
+      id: "basic_comprehension",
+      question:
+        "What value completes this list comprehension to double each number?",
+      code: "1> [___ || X <- [1, 2, 3, 4]].\n[2,4,6,8]",
+      answer: "X * 2",
+      hint: "Each element should be multiplied by 2",
+    },
+    {
+      id: "filter_comprehension",
+      question: "What filter makes this return only even numbers?",
+      code: "2> [X || X <- [1, 2, 3, 4, 5, 6], ___].\n[2,4,6]",
+      answer: "X rem 2 =:= 0",
+      hint: "Use the remainder operator to check for even numbers",
+    },
+    {
+      id: "pattern_match_generator",
+      question: "What pattern extracts just the names from these tuples?",
+      code: '3> [Name || ___ <- [{person, "Alice"}, {person, "Bob"}]].\n["Alice","Bob"]',
+      answer: "{_, Name}",
+      validation: "pattern_check",
+      hint: "Pattern match on the tuple structure",
+    },
+    {
+      id: "multiple_generators",
+      question: "What goes in the blank to create all combinations?",
+      code: "4> [{X, Y} || X <- [a, b], ___].\n[{a,1},{a,2},{b,1},{b,2}]",
+      answer: "Y <- [1, 2]",
+      hint: "Add a second generator for Y",
+    },
+    {
+      id: "nested_extraction",
+      question: "What expression extracts all users from all rooms?",
+      code: '5> Rooms = [{room, "general", ["Alice", "Bob"]}, {room, "erlang", ["Charlie"]}].\n6> [___ || {room, _, Users} <- Rooms, User <- Users].\n["Alice","Bob","Charlie"]',
+      answer: "User",
+      validation: "value_check",
+    },
+    {
+      id: "complex_filter",
+      question: "What filter selects messages with more than 10 characters?",
+      code: '7> Messages = [{msg, "Hi"}, {msg, "Hello World!"}, {msg, "Test"}].\n8> [Text || {msg, Text} <- Messages, ___].\n["Hello World!"]',
+      answer: "length(Text) > 10",
+      hint: "Use the length/1 function",
+    },
+    {
+      id: "transform_and_filter",
+      question: "What expression creates uppercase names for users over 25?",
+      code: '9> Users = [{"alice", 30}, {"bob", 20}, {"charlie", 28}].\n10> [___ || {Name, Age} <- Users, Age > 25].\n["ALICE","CHARLIE"]',
+      answer: "string:to_upper(Name)",
+      hint: "Transform the name to uppercase",
+    },
+    {
+      id: "binary_comprehension",
+      question: "What expression converts each byte to its character?",
+      code: '11> << <<___>> || <<X>> <= <<72,105,33>> >>.\n<<"Hi!">>',
+      answer: "X",
+      validation: "value_check",
+      hint: "Binary comprehensions preserve the bytes",
+    },
+  ]}
+/>

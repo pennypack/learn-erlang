@@ -1,16 +1,25 @@
 #!/usr/bin/env node
 
-import lesson1Tests from './lesson1-koans.test.js';
+// ES module imports
 
+// Import test modules directly
 async function runAllTests() {
   console.log('🧪 Running JS Erlang Interpreter Tests\n');
   
   try {
-    // Run lesson 1 tests
-    lesson1Tests.summary();
+    // Import lesson 1 tests (executes on import)
+    console.log('Running Lesson 1 Koan Tests...');
+    await import('./lesson1-koans.test.js');
+    
+    // Import validation tests (executes on import)
+    console.log('\nRunning Koan Validation Tests...');
+    await import('./koan-validation.test.js');
+    
+    console.log('\n✅ All test suites completed successfully!');
     
   } catch (error) {
     console.error('❌ Test execution failed:', error.message);
+    console.error(error.stack);
     process.exit(1);
   }
 }
