@@ -165,8 +165,62 @@ const { koans } = Astro.props;
         // Handle Erlang expression patterns like "Head + 1"
         if (cleanExpected.includes('+') || cleanExpected.includes('-') || cleanExpected.includes('*') || cleanExpected.includes('/')) {
           // Allow flexible matching for arithmetic expressions
-          const normalizeExpr = (expr: string) => expr.replace(/\s+/g, ' ').trim();
-          return normalizeExpr(cleanUser) === normalizeExpr(cleanExpected);
+          const normalizeExpr = (expr: string) => {
+            // Normalize whitespace and remove unnecessary parentheses
+            return expr
+              .replace(/\s+/g, ' ')
+              .replace(/\(\s*([^()]+)\s*\)/g, '$1') // Remove single parentheses
+              .trim();
+          };
+          
+          // Check for exact match first
+          if (normalizeExpr(cleanUser) === normalizeExpr(cleanExpected)) {
+            return true;
+          }
+          
+          // For multiplication, check commutative property (X * 2 === 2 * X)
+          if (cleanExpected.includes('*') || cleanUser.includes('*')) {
+            // Handle different multiplication formats
+            const parseMultiplication = (expr: string) => {
+              // Also handle (X) * 2, X*2, etc.
+              const normalized = normalizeExpr(expr);
+              const parts = normalized.split(/\s*\*\s*/).map(p => p.trim());
+              return parts;
+            };
+            
+            const expectedParts = parseMultiplication(cleanExpected);
+            const userParts = parseMultiplication(cleanUser);
+            
+            if (expectedParts.length === 2 && userParts.length === 2) {
+              // Check if it's the same multiplication in different order
+              if ((expectedParts[0] === userParts[0] && expectedParts[1] === userParts[1]) ||
+                  (expectedParts[0] === userParts[1] && expectedParts[1] === userParts[0])) {
+                return true;
+              }
+            }
+          }
+          
+          // For addition, check commutative property (X + Y === Y + X)
+          if (cleanExpected.includes('+') || cleanUser.includes('+')) {
+            const parseAddition = (expr: string) => {
+              const normalized = normalizeExpr(expr);
+              const parts = normalized.split(/\s*\+\s*/).map(p => p.trim());
+              return parts;
+            };
+            
+            const expectedParts = parseAddition(cleanExpected);
+            const userParts = parseAddition(cleanUser);
+            
+            if (expectedParts.length === 2 && userParts.length === 2) {
+              // Check if it's the same addition in different order
+              if ((expectedParts[0] === userParts[0] && expectedParts[1] === userParts[1]) ||
+                  (expectedParts[0] === userParts[1] && expectedParts[1] === userParts[0])) {
+                return true;
+              }
+            }
+          }
+          
+          return false;
         }
         
         // Case-insensitive matching for Erlang atoms and variables
