@@ -1,11 +1,6 @@
 #!/usr/bin/env node
 
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-// Get the directory of this script file
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// ES module imports
 
 // Import test modules directly
 async function runAllTests() {

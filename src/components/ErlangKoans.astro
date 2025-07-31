@@ -119,7 +119,7 @@ const { koans } = Astro.props;
   // Import the shared validation logic
   const { KoanValidator } = await import('../../js-erlang-interpreter/src/koan-validator.js');
 
-  let validator: KoanValidator;
+  let validator: InstanceType<typeof KoanValidator>;
 
   function initializeKoans() {
     validator = new KoanValidator();
