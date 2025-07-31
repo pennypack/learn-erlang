@@ -1,122 +1,5 @@
 import { TestFramework } from './test-framework.js';
-
-// Extract the validation logic from ErlangKoans.astro
-class KoanValidator {
-  async validateAnswer(userAnswer, expectedAnswer, validationHint) {
-    // For the specific case of pattern matching, we can validate semantically
-    if (validationHint === 'pattern_check') {
-      // This is a pattern matching validation
-      try {
-        // Check if it's a list that would make Second = 20
-        if (userAnswer.includes('[') && userAnswer.includes(']')) {
-          const numbers = userAnswer.replace(/\[|\]/g, '').split(',').map(n => n.trim());
-          if (numbers.length === 3 && numbers[1] === '20') {
-            return true;
-          }
-        }
-        
-        // Check if it's a tuple that would make Status = ok and Value = 42
-        if (userAnswer.includes('{') && userAnswer.includes('}')) {
-          const cleanAnswer = userAnswer.replace(/[{}]/g, '').split(',').map(s => s.trim());
-          if (cleanAnswer.length === 2 && cleanAnswer[0] === 'ok' && cleanAnswer[1] === '42') {
-            return true;
-          }
-        }
-        
-        return false;
-      } catch (error) {
-        return false;
-      }
-    }
-    
-    // For arithmetic and other value checks, allow flexible matching
-    if (validationHint === 'value_check' || !validationHint) {
-      // Remove whitespace and check if it's the expected value
-      const cleanUser = userAnswer.trim();
-      const cleanExpected = expectedAnswer.trim();
-      
-      // Try to parse as numbers for arithmetic
-      const userNum = parseFloat(cleanUser);
-      const expectedNum = parseFloat(cleanExpected);
-      
-      if (!isNaN(userNum) && !isNaN(expectedNum)) {
-        return userNum === expectedNum;
-      }
-      
-      // Handle Erlang expression patterns like "Head + 1"
-      if (cleanExpected.includes('+') || cleanExpected.includes('-') || cleanExpected.includes('*') || cleanExpected.includes('/')) {
-        // Allow flexible matching for arithmetic expressions
-        const normalizeExpr = (expr) => {
-          // Normalize whitespace and remove unnecessary parentheses
-          return expr
-            .replace(/\s+/g, ' ')
-            .replace(/\(\s*([^()]+)\s*\)/g, '$1') // Remove single parentheses
-            .trim();
-        };
-        
-        // Check for exact match first
-        if (normalizeExpr(cleanUser) === normalizeExpr(cleanExpected)) {
-          return true;
-        }
-        
-        // For multiplication, check commutative property (X * 2 === 2 * X)
-        if (cleanExpected.includes('*') || cleanUser.includes('*')) {
-          // Handle different multiplication formats
-          const parseMultiplication = (expr) => {
-            // Also handle (X) * 2, X*2, etc.
-            const normalized = normalizeExpr(expr);
-            const parts = normalized.split(/\s*\*\s*/).map(p => p.trim());
-            return parts;
-          };
-          
-          const expectedParts = parseMultiplication(cleanExpected);
-          const userParts = parseMultiplication(cleanUser);
-          
-          if (expectedParts.length === 2 && userParts.length === 2) {
-            // Check if it's the same multiplication in different order
-            if ((expectedParts[0] === userParts[0] && expectedParts[1] === userParts[1]) ||
-                (expectedParts[0] === userParts[1] && expectedParts[1] === userParts[0])) {
-              return true;
-            }
-          }
-        }
-        
-        // For addition, check commutative property (X + Y === Y + X)
-        if (cleanExpected.includes('+') || cleanUser.includes('+')) {
-          const parseAddition = (expr) => {
-            const normalized = normalizeExpr(expr);
-            const parts = normalized.split(/\s*\+\s*/).map(p => p.trim());
-            return parts;
-          };
-          
-          const expectedParts = parseAddition(cleanExpected);
-          const userParts = parseAddition(cleanUser);
-          
-          if (expectedParts.length === 2 && userParts.length === 2) {
-            // Check if it's the same addition in different order
-            if ((expectedParts[0] === userParts[0] && expectedParts[1] === userParts[1]) ||
-                (expectedParts[0] === userParts[1] && expectedParts[1] === userParts[0])) {
-              return true;
-            }
-          }
-        }
-        
-        return false;
-      }
-      
-      // Case-insensitive matching for Erlang atoms and variables
-      if (cleanExpected.toLowerCase() === cleanUser.toLowerCase()) {
-        return true;
-      }
-      
-      // Otherwise do string comparison
-      return cleanUser === cleanExpected;
-    }
-    
-    // Default to string comparison
-    return userAnswer === expectedAnswer;
-  }
-}
+import { KoanValidator } from '../src/koan-validator.js';
 
 // Run tests
 const test = new TestFramework();
@@ -170,23 +53,91 @@ test.describe('Koan Validation Tests', () => {
     });
   });
   
-  test.describe('Pattern Matching Validation', () => {
-    test.it('should validate list patterns', async () => {
-      const result1 = await validator.validateAnswer('[10, 20, 30]', '[any, 20, any]', 'pattern_check');
-      const result2 = await validator.validateAnswer('[5, 20, 100]', '[any, 20, any]', 'pattern_check');
-      const result3 = await validator.validateAnswer('[1, 10, 3]', '[any, 20, any]', 'pattern_check');
+  test.describe('Pattern Matching Validation', () => {    
+    test.it('should validate tuple patterns with concrete values and specific variable names', async () => {
+      const result1 = await validator.validateAnswer('{person, Name}', '{person, Name}', 'pattern_check');
+      const result2 = await validator.validateAnswer('{person, UserName}', '{person, Name}', 'pattern_check');
+      const result3 = await validator.validateAnswer('{person, _}', '{person, Name}', 'pattern_check');
+      const result4 = await validator.validateAnswer('{_, Name}', '{person, Name}', 'pattern_check');
+      test.expect(result1).toBeTrue();  // Exact match
+      test.expect(result2).toBeFalse(); // Different variable name not allowed
+      test.expect(result3).toBeTrue();  // _ wildcard allowed
+      test.expect(result4).toBeTrue();  // _ can match atoms
+    });
+    
+    test.it('should validate tuple patterns with different spacing', async () => {
+      const result1 = await validator.validateAnswer('{ person , Name }', '{person, Name}', 'pattern_check');
+      const result2 = await validator.validateAnswer('{person,Name}', '{person, Name}', 'pattern_check');
+      test.expect(result1).toBeTrue();
+      test.expect(result2).toBeTrue();
+    });
+    
+    test.it('should reject wrong arity patterns', async () => {
+      const result1 = await validator.validateAnswer('{person}', '{person, Name}', 'pattern_check');
+      const result2 = await validator.validateAnswer('{person, Name, Age}', '{person, Name}', 'pattern_check');
+      test.expect(result1).toBeFalse();
+      test.expect(result2).toBeFalse();
+    });
+    
+    test.it('should reject wrong pattern types', async () => {
+      const result1 = await validator.validateAnswer('[person, Name]', '{person, Name}', 'pattern_check');
+      const result2 = await validator.validateAnswer('{person, Name}', '[person, Name]', 'pattern_check');
+      test.expect(result1).toBeFalse();
+      test.expect(result2).toBeFalse();
+    });
+    
+    test.it('should reject invalid variable names', async () => {
+      const result1 = await validator.validateAnswer('{person, 123}', '{person, Name}', 'pattern_check');
+      const result2 = await validator.validateAnswer('{person, lowercase}', '{person, Name}', 'pattern_check');
+      test.expect(result1).toBeFalse();
+      test.expect(result2).toBeFalse();
+    });
+    
+    test.it('should allow flexible matching when expected has wildcard', async () => {
+      const result1 = await validator.validateAnswer('{person, Name}', '{_, Name}', 'pattern_check');
+      const result2 = await validator.validateAnswer('{admin, Name}', '{_, Name}', 'pattern_check');
+      const result3 = await validator.validateAnswer('{_, Name}', '{_, Name}', 'pattern_check');
+      test.expect(result1).toBeTrue();
+      test.expect(result2).toBeTrue();
+      test.expect(result3).toBeTrue();
+    });
+    
+    test.it('should handle constraint patterns with specific value requirements', async () => {
+      // This is the regression case - pattern2 from lesson 01
+      const result1 = await validator.validateAnswer('[10, 20, 30]', '[_, 20, _]', 'pattern_check');
+      const result2 = await validator.validateAnswer('[10, 20, 40]', '[_, 20, _]', 'pattern_check');
+      const result3 = await validator.validateAnswer('[5, 20, 100]', '[_, 20, _]', 'pattern_check');
+      const result4 = await validator.validateAnswer('[10, 30, 40]', '[_, 20, _]', 'pattern_check');
+      const result5 = await validator.validateAnswer('[10, 20]', '[_, 20, _]', 'pattern_check');
+      
+      test.expect(result1).toBeTrue();  // Original expected answer should work
+      test.expect(result2).toBeTrue();  // Different third element should work
+      test.expect(result3).toBeTrue();  // Different first and third should work
+      test.expect(result4).toBeFalse(); // Wrong second element should fail
+      test.expect(result5).toBeFalse(); // Wrong arity should fail
+    });
+    
+    test.it('should handle constraint patterns with tuples', async () => {
+      const result1 = await validator.validateAnswer('{ok, 42}', '{ok, _}', 'pattern_check');
+      const result2 = await validator.validateAnswer('{ok, 100}', '{ok, _}', 'pattern_check');
+      const result3 = await validator.validateAnswer('{error, 42}', '{ok, _}', 'pattern_check');
+      
       test.expect(result1).toBeTrue();
       test.expect(result2).toBeTrue();
       test.expect(result3).toBeFalse();
     });
     
-    test.it('should validate tuple patterns', async () => {
-      const result1 = await validator.validateAnswer('{ok, 42}', '{ok, 42}', 'pattern_check');
-      const result2 = await validator.validateAnswer('{ ok , 42 }', '{ok, 42}', 'pattern_check');
-      const result3 = await validator.validateAnswer('{error, 42}', '{ok, 42}', 'pattern_check');
-      test.expect(result1).toBeTrue();
-      test.expect(result2).toBeTrue();
-      test.expect(result3).toBeFalse();
+    test.it('should handle pattern_match_generator case from lesson 05', async () => {
+      // Test the lesson 05 pattern_match_generator koan
+      const result1 = await validator.validateAnswer('{person, Name}', '{_, Name}', 'pattern_check');
+      const result2 = await validator.validateAnswer('{user, Name}', '{_, Name}', 'pattern_check');
+      const result3 = await validator.validateAnswer('{_, Name}', '{_, Name}', 'pattern_check');
+      const result4 = await validator.validateAnswer('{person, UserName}', '{_, Name}', 'pattern_check');
+      
+      test.expect(result1).toBeTrue();  // Different first element, correct second
+      test.expect(result2).toBeTrue();  // Different first element, correct second
+      test.expect(result3).toBeTrue();  // Exact match
+      test.expect(result4).toBeFalse(); // Wrong second element (must be Name)
     });
   });
   

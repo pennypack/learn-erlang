@@ -285,7 +285,8 @@ Practice your understanding with these fill-in-the-blank exercises:
       id: "pattern_match_generator",
       question: "What pattern extracts just the names from these tuples?",
       code: '3> [Name || ___ <- [{person, "Alice"}, {person, "Bob"}]].\n["Alice","Bob"]',
-      answer: "{person, Name}",
+      answer: "{_, Name}",
+      validation: "pattern_check",
       hint: "Pattern match on the tuple structure",
     },
     {
