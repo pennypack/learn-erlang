@@ -1,47 +1,298 @@
 ---
-title: "[Coming Soon] Records and Complex Data Structures"
+title: "Records and Complex Data Structures"
 description: "Learn to define and work with records, nested data structures, and type-safe data modeling for scalable chat server architecture"
 postNumber: 6
-publishDate: 2025-07-09T00:00:00Z
-tags: ["intermediate","records","data-structures"]
+publishDate: 2025-07-31T00:00:00Z
+tags: ["intermediate", "records", "data-structures"]
 difficulty: "intermediate"
 ---
 
+import ErlangKoans from "../../components/ErlangKoans.astro";
+
 # Records and Complex Data Structures
 
-## Coming Soon
+After learning list comprehensions for data transformation, we need structured ways to organize complex data. Records provide a powerful mechanism for creating named, typed data structures that make our chat server code more maintainable and type-safe.
 
-This lesson will teach you how to define and work with Erlang records and complex data structures. You'll learn how to:
+## Understanding Records
 
-- Define custom record types for structured data
-- Create nested data structures for complex domain models
-- Use type-safe patterns for data validation
-- Build efficient data access and manipulation functions
-- Design scalable data models for chat server entities
-
-### What You'll Build
-
-By the end of this lesson, you'll have implemented:
-- User and message record definitions
-- Chat room and channel data structures
-- Type-safe data access patterns
-- Validation functions for complex data types
-- A foundation for the chat server's data layer
-
-### Key Concepts Preview
+Records in Erlang are compile-time constructs that provide named access to tuple elements. This means records don't exist at runtime. The compiler transforms record syntax into regular tuple operations. When you write `User#user.name`, Erlang converts this to element extraction from a tuple, making records both convenient and efficient. They're perfect for representing entities like users, messages, and chat rooms in our application.
 
 ```erlang
-% Record definitions
--record(user, {id, name, email, status, joined_at}).
--record(message, {id, user_id, room_id, content, timestamp}).
-
-% Type-safe data access
-User = #user{name="Alice", status=online},
-UserName = User#user.name.
+1> -record(user, {id, name, email, status = offline}).
+2> User = #user{id=1, name="Alice", email="alice@example.com"}.
+#user{id=1,name="Alice",email="alice@example.com",status=offline}
+3> User#user.name.
+"Alice"
+4> User#user.status.
+offline
 ```
 
-This lesson builds on the data manipulation skills from Lesson 4 and prepares you for the error handling patterns we'll explore in Lesson 6.
+Records must be defined before use, typically in module headers or separate header files.
 
----
+## Defining Records
 
-_This lesson is currently under development. Check back soon for the complete content!_
+Record definitions use the `-record` directive with field specifications:
+
+```erlang
+1> -record(message, {
+1>   id,
+1>   user_id,
+1>   room_id,
+1>   content,
+1>   timestamp,
+1>   type = text
+1> }).
+2> Msg = #message{
+2>   id=101,
+2>   user_id=1,
+2>   room_id=5,
+2>   content="Hello everyone!",
+2>   timestamp={{2024,7,31},{14,30,0}}
+2> }.
+#message{id=101,user_id=1,room_id=5,content="Hello everyone!",
+         timestamp={{2024,7,31},{14,30,0}},type=text}
+```
+
+Fields can have default values, and omitted fields get the atom `undefined`.
+
+## Record Pattern Matching
+
+Records excel in pattern matching, making data extraction clean and readable:
+
+```erlang
+1> -record(user, {id, name, status}).
+2> process_user(#user{name=Name, status=online}) ->
+2>   {active_user, Name};
+2> process_user(#user{name=Name, status=offline}) ->
+2>   {inactive_user, Name}.
+3> Alice = #user{id=1, name="Alice", status=online}.
+#user{id=1,name="Alice",status=online}
+4> process_user(Alice).
+{active_user,"Alice"}
+```
+
+## Updating Records
+
+Records are immutable, but you can create new records with updated fields:
+
+```erlang
+1> -record(user, {id, name, status, last_seen}).
+2> User = #user{id=1, name="Bob", status=offline}.
+#user{id=1,name="Bob",status=offline,last_seen=undefined}
+3> OnlineUser = User#user{status=online, last_seen=now}.
+#user{id=1,name="Bob",status=online,last_seen=now}
+4> User.
+#user{id=1,name="Bob",status=offline,last_seen=undefined}
+```
+
+The original record remains unchanged - we create a new one with modified fields.
+
+## Nested Data Structures
+
+Records can contain other records, creating rich data models:
+
+```erlang
+1> -record(address, {street, city, country}).
+2> -record(user_profile, {id, name, email, address}).
+3> Address = #address{
+3>   street="123 Main St",
+3>   city="Springfield",
+3>   country="USA"
+3> }.
+#address{street="123 Main St",city="Springfield",country="USA"}
+4> Profile = #user_profile{
+4>   id=1,
+4>   name="Charlie",
+4>   email="charlie@example.com",
+4>   address=Address
+4> }.
+#user_profile{id=1,name="Charlie",email="charlie@example.com",
+              address=#address{street="123 Main St",city="Springfield",
+                              country="USA"}}
+5> Profile#user_profile.address#address.city.
+"Springfield"
+```
+
+## Working with Lists of Records
+
+Combining records with list comprehensions creates powerful data processing:
+
+```erlang
+1> -record(user, {id, name, status, age}).
+2> Users = [
+2>   #user{id=1, name="Alice", status=online, age=25},
+2>   #user{id=2, name="Bob", status=offline, age=30},
+2>   #user{id=3, name="Carol", status=online, age=28}
+2> ].
+3> OnlineUsers = [U#user.name || U <- Users, U#user.status =:= online].
+["Alice","Carol"]
+4> AverageAge = lists:sum([U#user.age || U <- Users]) / length(Users).
+27.666666666666668
+```
+
+## Record Guards
+
+Records work seamlessly with guards for robust pattern matching:
+
+```erlang
+1> -record(message, {id, content, priority}).
+2> classify_message(#message{priority=P}) when P > 8 ->
+2>   urgent;
+2> classify_message(#message{priority=P}) when P > 5 ->
+2>   important;
+2> classify_message(#message{}) ->
+2>   normal.
+3> Msg1 = #message{id=1, content="Emergency!", priority=9}.
+#message{id=1,content="Emergency!",priority=9}
+4> classify_message(Msg1).
+urgent
+```
+
+## Chat Server Data Models
+
+For our chat server, we can define comprehensive data structures:
+
+```erlang
+1> -record(chat_room, {
+1>   id,
+1>   name,
+1>   description,
+1>   created_by,
+1>   created_at,
+1>   users = [],
+1>   is_private = false
+1> }).
+2> -record(chat_message, {
+2>   id,
+2>   room_id,
+2>   user_id,
+2>   content,
+2>   timestamp,
+2>   message_type = text,
+2>   metadata = []
+2> }).
+3> Room = #chat_room{
+3>   id=100,
+3>   name="General",
+3>   description="General discussion",
+3>   created_by=1,
+3>   users=[1,2,3]
+3> }.
+#chat_room{id=100,name="General",description="General discussion",
+           created_by=1,created_at=undefined,users=[1,2,3],
+           is_private=false}
+```
+
+## Exercises
+
+**Exercise 1: User Management**
+Create a user record with validation functions. Include fields for id, username, email, and join_date.
+
+```erlang
+-record(user, {id, username, email, join_date}).
+
+validate_user(#user{username=Username, email=Email})
+  when length(Username) > 0, length(Email) > 5 ->
+  valid;
+validate_user(_) ->
+  invalid.
+```
+
+**Exercise 2: Message Threading**
+Design a record structure for threaded messages that can reference parent messages.
+
+```erlang
+-record(thread_message, {
+  id,
+  parent_id,
+  content,
+  author,
+  timestamp,
+  replies = []
+}).
+
+add_reply(ParentMsg, ReplyMsg) ->
+  Replies = ParentMsg#thread_message.replies,
+  ParentMsg#thread_message{replies = [ReplyMsg|Replies]}.
+```
+
+**Exercise 3: Complex Data Filtering**
+Process a list of chat rooms to find rooms with specific criteria.
+
+```erlang
+find_active_rooms(Rooms) ->
+  [R || R <- Rooms,
+        R#chat_room.is_private =:= false,
+        length(R#chat_room.users) > 2].
+```
+
+## Key Takeaways
+
+- **Records provide structure** to complex data with named field access
+- **Pattern matching with records** enables clean data extraction and processing
+- **Record updates create new instances** while preserving immutability
+- **Nested records** support complex domain modeling
+- **Guards and comprehensions** work naturally with record patterns
+- **Default values** make record creation more flexible
+- **Type safety** improves through structured data access patterns
+- **Chat server entities** benefit from well-designed record schemas
+
+## Interactive Koans
+
+<ErlangKoans
+  koans={[
+    {
+      id: "record_definition",
+      question:
+        "What atom is used as the default value for undefined record fields?",
+      code: '-record(person, {name, age}).\nP = #person{name="Alice"}.\nP#person.age.',
+      answer: "undefined",
+      validation: "value_check",
+    },
+    {
+      id: "record_creation",
+      question:
+        'What value should be assigned to create a user record with id=1 and name="Bob"?',
+      code: "-record(user, {id, name, status}).\nUser = ___.",
+      answer: '#user{id=1, name="Bob"}',
+      hint: "Use record syntax with field assignments",
+    },
+    {
+      id: "record_field_access",
+      question: "What expression extracts the name field from a user record?",
+      code: '-record(user, {id, name, email}).\nUser = #user{id=1, name="Charlie", email="charlie@test.com"}.\nName = ___.',
+      answer: "User#user.name",
+      hint: "Use record.field syntax",
+    },
+    {
+      id: "record_update",
+      question: "What expression updates a user's status to online?",
+      code: '-record(user, {id, name, status}).\nUser = #user{id=1, name="Dave", status=offline}.\nOnlineUser = ___.',
+      answer: "User#user{status=online}",
+      hint: "Use record update syntax",
+    },
+    {
+      id: "record_pattern_match",
+      question: "What pattern matches users with online status?",
+      code: "get_active_users(Users) ->\n  [Name || #user{name=Name, status=___} <- Users].",
+      answer: "online",
+      validation: "value_check",
+    },
+    {
+      id: "nested_record_access",
+      question:
+        "What expression accesses the city from a nested address record?",
+      code: '-record(address, {street, city}).\n-record(person, {name, address}).\nP = #person{name="Eve", address=#address{street="Oak St", city="Boston"}}.\nCity = ___.',
+      answer: "P#person.address#address.city",
+      hint: "Chain record field access",
+    },
+    {
+      id: "record_comprehension",
+      question:
+        "What field should be used to filter users by age greater than 21?",
+      code: '-record(user, {name, age, status}).\nUsers = [#user{name="Frank", age=25}, #user{name="Grace", age=19}].\nAdults = [U#user.name || U <- Users, U#user.___ > 21].',
+      answer: "age",
+      validation: "value_check",
+    },
+  ]}
+/>
