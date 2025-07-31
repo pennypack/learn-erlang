@@ -1,34 +1,30 @@
 #!/usr/bin/env node
 
-import { exec } from 'child_process';
-import { promisify } from 'util';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-const execAsync = promisify(exec);
+// Get the directory of this script file
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
+// Import test modules directly
 async function runAllTests() {
   console.log('🧪 Running JS Erlang Interpreter Tests\n');
   
   try {
-    // Run lesson 1 tests
+    // Import lesson 1 tests (executes on import)
     console.log('Running Lesson 1 Koan Tests...');
-    const { stdout: lesson1Output } = await execAsync('node lesson1-koans.test.js', { cwd: process.cwd() });
-    console.log(lesson1Output);
+    await import('./lesson1-koans.test.js');
     
-    // Run validation tests
+    // Import validation tests (executes on import)
     console.log('\nRunning Koan Validation Tests...');
-    const { stdout: validationOutput } = await execAsync('node koan-validation.test.js', { cwd: process.cwd() });
-    console.log(validationOutput);
+    await import('./koan-validation.test.js');
     
     console.log('\n✅ All test suites completed successfully!');
     
   } catch (error) {
     console.error('❌ Test execution failed:', error.message);
-    if (error.stdout) {
-      console.log('Test output:', error.stdout);
-    }
-    if (error.stderr) {
-      console.error('Error output:', error.stderr);
-    }
+    console.error(error.stack);
     process.exit(1);
   }
 }
