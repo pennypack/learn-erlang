@@ -40,7 +40,7 @@ format_message(User, Message) ->
 
 current_timestamp() ->
     {{Year, Month, Day}, {Hour, Min, Sec}} = calendar:local_time(),
-    list:flatten(io_lib:format("~4..0w-~2..0w-~2..0w ~2..0w:~2..0w:~2..0w",
+    lists:flatten(io_lib:format("~4..0w-~2..0w-~2..0w ~2..0w:~2..0w:~2..0w",
                   [Year, Month, Day, Hour, Min, Sec])).
 ```
 
