@@ -216,4 +216,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-Built with ❤️ by Pennypack Software and the Erlang Community
+Built with ❤️ by East Branch Software and the Erlang Community
