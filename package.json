@@ -2,7 +2,7 @@
   "name": "learn-erlang-site",
   "type": "module",
   "version": "0.0.1",
-  "author": "Pennypack Software LLC",
+  "author": "East Branch Software LLC",
   "license": "MIT",
   "scripts": {
     "dev": "astro dev",
