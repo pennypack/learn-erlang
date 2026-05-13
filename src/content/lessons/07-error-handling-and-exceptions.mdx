@@ -1,47 +1,240 @@
 ---
-title: "[Coming Soon] Error Handling and Exceptions"
+title: "Error Handling and Exceptions"
 description: "Master Erlang's error handling philosophy, try-catch patterns, and defensive programming techniques for building fault-tolerant chat systems"
 postNumber: 7
-publishDate: 2025-07-09T00:00:00Z
-tags: ["intermediate","error-handling","exceptions"]
+publishDate: 2025-08-05T00:00:00Z
+tags: ["intermediate", "error-handling", "exceptions"]
 difficulty: "intermediate"
 ---
 
-# Error Handling and Exceptions
+import ErlangKoans from '../../components/ErlangKoans.astro';
 
-## Coming Soon
+Now that we've structured our data with records, we need robust error handling to manage the unexpected situations that arise when processing user input, network connections, and chat messages. Erlang's error handling philosophy differs fundamentally from most languages, embracing failure as a normal part of system operation.
 
-This lesson will cover Erlang's unique approach to error handling and the "let it crash" philosophy. You'll learn how to:
+## Erlang's Error Philosophy
 
-- Understand Erlang's error handling philosophy
-- Use try-catch blocks for controlled error recovery
-- Implement defensive programming patterns
-- Handle different types of errors (throws, errors, exits)
-- Build fault-tolerant functions that gracefully handle failures
-
-### What You'll Build
-
-By the end of this lesson, you'll have implemented:
-- Robust error handling for chat server operations
-- Validation functions with comprehensive error reporting
-- Recovery strategies for common failure scenarios
-- Logging and monitoring for error tracking
-- A foundation for the fault-tolerant architecture
-
-### Key Concepts Preview
+Erlang follows the "let it crash" philosophy. Rather than defensive programming with extensive error checking, Erlang encourages processes to fail quickly and cleanly. Supervisors then restart failed processes, maintaining system stability. This approach simplifies code and improves reliability.
 
 ```erlang
-% Error handling patterns
-try
-    validate_user_input(Input)
-catch
-    error:{invalid_input, Reason} -> {error, Reason};
-    throw:validation_failed -> {error, invalid_data}
-end.
+1> divide(X, Y) -> X / Y.
+2> divide(10, 2).
+5.0
+3> divide(10, 0).
+** exception error: an error occurred when evaluating an arithmetic expression
+     in function  erl_eval:do_apply/6 (erl_eval.erl, line 680)
 ```
 
-This lesson builds on the structured data from Lesson 5 and prepares you for the process-based error handling we'll explore in Lesson 7.
+The division by zero crashes the process. In traditional languages, you'd check for zero first. In Erlang, we handle this at a higher level.
 
----
+## Types of Exceptions
 
-_This lesson is currently under development. Check back soon for the complete content!_
+Erlang has three exception types, each serving different purposes:
+
+```erlang
+1> throw(custom_error).
+** exception throw: custom_error
+2> error(badarg).
+** exception error: badarg
+3> exit(normal).
+** exception exit: normal
+```
+
+- **throw**: For expected, recoverable errors (like validation failures)
+- **error**: For runtime errors and programming mistakes
+- **exit**: For process termination signals
+
+## Try-Catch Blocks
+
+When you need controlled error recovery, use try-catch:
+
+```erlang
+1> safe_divide(X, Y) ->
+1>   try
+1>     X / Y
+1>   catch
+1>     error:badarith -> {error, division_by_zero}
+1>   end.
+2> safe_divide(10, 2).
+5.0
+3> safe_divide(10, 0).
+{error,division_by_zero}
+```
+
+The try-catch pattern allows selective error handling while maintaining clean code flow.
+
+## Pattern Matching in Catch Clauses
+
+Catch clauses support sophisticated pattern matching:
+
+```erlang
+1> process_input(Input) ->
+1>   try
+1>     validate(Input),
+1>     transform(Input)
+1>   catch
+1>     throw:{validation_error, Field} ->
+1>       {error, {invalid_field, Field}};
+1>     error:function_clause ->
+1>       {error, invalid_format};
+1>     _:_ ->
+1>       {error, unknown}
+1>   end.
+```
+
+Each catch clause matches specific error patterns, enabling precise error handling.
+
+## After Blocks for Cleanup
+
+The `after` block ensures cleanup code runs regardless of success or failure:
+
+```erlang
+1> read_file(Path) ->
+1>   {ok, File} = file:open(Path, [read]),
+1>   try
+1>     file:read(File, 1024)
+1>   after
+1>     file:close(File)
+1>   end.
+```
+
+The file closes even if reading fails, preventing resource leaks.
+
+## Error Handling with Records
+
+Combining error handling with our record structures from lesson 06:
+
+```erlang
+1> -record(user, {id, name, email}).
+2> -record(result, {status, data, error}).
+3> create_user(Name, Email) ->
+3>   try
+3>     validate_email(Email),
+3>     User = #user{id=generate_id(), name=Name, email=Email},
+3>     #result{status=ok, data=User}
+3>   catch
+3>     throw:invalid_email ->
+3>       #result{status=error, error=invalid_email}
+3>   end.
+```
+
+Records provide structured error responses, making error handling consistent across your application.
+
+## Defensive Return Values
+
+Many Erlang functions return tagged tuples instead of throwing exceptions:
+
+```erlang
+1> parse_message(Input) ->
+1>   case is_valid_format(Input) of
+1>     true -> {ok, process(Input)};
+1>     false -> {error, invalid_format}
+1>   end.
+2> handle_result({ok, Data}) ->
+2>   process_data(Data);
+2> handle_result({error, Reason}) ->
+2>   log_error(Reason).
+```
+
+This pattern allows callers to decide how to handle errors.
+
+## Error Propagation
+
+Sometimes you want errors to propagate up the call stack:
+
+```erlang
+1> process_batch(Items) ->
+1>   Results = lists:map(
+1>     fun(Item) ->
+1>       try
+1>         process_item(Item)
+1>       catch
+1>         error:Reason -> {error, Item, Reason}
+1>       end
+1>     end,
+1>     Items
+1>   ),
+1>   case lists:filter(fun({error, _, _}) -> true; (_) -> false end, Results) of
+1>     [] -> {ok, Results};
+1>     Errors -> {batch_errors, Errors}
+1>   end.
+```
+
+## Stack Traces
+
+Erlang provides detailed stack traces for debugging:
+
+```erlang
+1> catch_with_trace() ->
+1>   try
+1>     error(something_bad)
+1>   catch
+1>     error:Reason:Stacktrace ->
+1>       {error, Reason, Stacktrace}
+1>   end.
+2> catch_with_trace().
+{error,something_bad,
+       [{erl_eval,do_apply,6,[{file,"erl_eval.erl"},{line,680}]},
+        {shell,exprs,7,[{file,"shell.erl"},{line,686}]}]}
+```
+
+Stack traces help identify error sources in complex call chains.
+
+## Key Takeaways
+
+- **"Let it crash" philosophy** simplifies code by avoiding defensive programming
+- **Three exception types** serve different purposes: throw, error, and exit
+- **Try-catch blocks** provide controlled error recovery when needed
+- **Pattern matching in catch clauses** enables precise error handling
+- **After blocks** ensure cleanup code always runs
+- **Tagged tuples** offer non-exception error handling
+- **Stack traces** aid debugging complex error scenarios
+- **Error propagation patterns** handle batch operations gracefully
+
+## Interactive Koans
+
+<ErlangKoans
+  koans={[
+    {
+      id: "catch_multiple_patterns",
+      question: "What catches a validation_error thrown exception?",
+      code: "-record(user, {name, age}).\n1> validate_user(User) ->\n    try\n        User#user.age > 0 orelse throw(validation_error),\n        {ok, User}\n    catch\n        throw:___ -> {error, invalid_age}\n    end.",
+      answer: "validation_error",
+      validation: "value_check"
+    },
+    {
+      id: "try_of_pattern",
+      question: "What value makes this try-of clause return success?",
+      code: "1> safe_operation(X) ->\n    try\n        X * 2\n    of\n        ___ -> {success, doubled};\n        _ -> {success, other}\n    catch\n        error:_ -> {error, failed}\n    end.\n2> safe_operation(5).",
+      answer: "10",
+      hint: "What does 5 * 2 equal?"
+    },
+    {
+      id: "stacktrace_variable",
+      question: "What variable captures the stack trace in this catch?",
+      code: "1> debug_error() ->\n    try\n        error(something_wrong)\n    catch\n        error:Reason:___ ->\n            {caught, Reason, length(Stacktrace)}\n    end.",
+      answer: "Stacktrace",
+      validation: "value_check"
+    },
+    {
+      id: "nested_try_catch",
+      question: "What value gets returned from this nested error handling?",
+      code: "1> complex_operation() ->\n    try\n        try\n            throw(inner)\n        catch\n            throw:inner -> error(outer)\n        end\n    catch\n        error:outer -> ___\n    end.",
+      answer: "recovered",
+      hint: "What atom indicates recovery from the outer error?"
+    },
+    {
+      id: "after_with_error",
+      question: "What keyword ensures cleanup runs even after an error?",
+      code: "1> with_resource(Fun) ->\n    Handle = open_resource(),\n    try\n        Fun(Handle)\n    ___\n        close_resource(Handle)\n    end.",
+      answer: "after",
+      validation: "value_check"
+    },
+    {
+      id: "error_tuple_reason",
+      question: "What atom completes this error tuple pattern match?",
+      code: "1> handle_result(Result) ->\n    case Result of\n        {ok, Data} -> process(Data);\n        {___, Reason} -> log_failure(Reason)\n    end.",
+      answer: "error",
+      validation: "value_check"
+    }
+  ]}
+/>
