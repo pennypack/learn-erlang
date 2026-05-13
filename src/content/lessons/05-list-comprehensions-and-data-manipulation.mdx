@@ -314,7 +314,7 @@ Practice your understanding with these fill-in-the-blank exercises:
       id: "transform_and_filter",
       question: "What expression creates uppercase names for users over 25?",
       code: '9> Users = [{"alice", 30}, {"bob", 20}, {"charlie", 28}].\n10> [___ || {Name, Age} <- Users, Age > 25].\n["ALICE","CHARLIE"]',
-      answer: "string:to_upper(Name)",
+      answer: "string:uppercase(Name)",
       hint: "Transform the name to uppercase",
     },
     {
