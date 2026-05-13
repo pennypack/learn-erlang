@@ -32,7 +32,7 @@ Through 35 progressive lessons, you'll build a complete WebSocket chat server wh
 
 ```bash
 # Clone the repository
-git clone https://github.com/pennypack/learn-erlang.git
+git clone https://github.com/eastbranchsoftware/learn-erlang.git
 cd learn-erlang
 
 # Install dependencies
@@ -100,6 +100,7 @@ When creating or modifying koans:
    - Default: Simple string comparison
 
 Example koan structure:
+
 ```javascript
 {
   id: "unique_koan_id",
@@ -173,6 +174,7 @@ The interactive koans are powered by a custom JavaScript-based Erlang interprete
 ### Current Limitations
 
 The interpreter is designed for teaching basic concepts and currently supports:
+
 - Simple pattern matching
 - List operations
 - Basic arithmetic and comparisons
@@ -182,6 +184,7 @@ The interpreter is designed for teaching basic concepts and currently supports:
 ### Contributing to the Interpreter
 
 The interpreter needs enhancement to support more advanced koans. Areas for improvement include:
+
 - Map syntax and operations
 - Process spawning and message passing
 - More complex pattern matching scenarios
@@ -190,6 +193,7 @@ The interpreter needs enhancement to support more advanced koans. Areas for impr
 - Module system basics
 
 **Testing Requirements**: When adding new koan patterns or interpreter features:
+
 1. All koan patterns MUST have corresponding test cases in `js-erlang-interpreter/tests/`
 2. Test files should follow the naming convention: `lessonXX-koans.test.js`
 3. Each test should validate that the koan's expected answer produces the correct result
@@ -211,8 +215,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🔗 Links
 
 - [Live Site](https://learnerlang.com)
-- [Report Issues](https://github.com/pennypack/learn-erlang/issues)
-- [Discussions](https://github.com/pennypack/learn-erlang/discussions)
+- [Report Issues](https://github.com/eastbranchsoftware/learn-erlang/issues)
+- [Discussions](https://github.com/eastbranchsoftware/learn-erlang/discussions)
 
 ---
 
